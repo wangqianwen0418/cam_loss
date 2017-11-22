@@ -10,8 +10,10 @@ import io
 import cv2
 from PIL import Image as Image_PIL
 import numpy as np
-
-IMG_PATH = "/home/qianww/hat_mask/data/007.png"
+import os
+IMG_NAME = "003.png"
+DIR = "/home/qianww/hat_mask/data/"
+IMG_PATH = os.path.join(DIR, IMG_NAME) 
 MODEL_PATH = "/home/qianww/hat_mask/resnet56/save_model/resnet_model.h5"
 
 def download_img(url, name="test"):
@@ -80,4 +82,4 @@ print([(preds[i], labels[i]) for i in idxs])
 
 for idx in idxs:
     cam = get_cam(feature_conv, weights, idx)
-    heatmap(cam, img_path=img_path, save_name="imgs/cam_keras_{}".format(idx))
+    heatmap(cam, img_path=img_path, save_name="imgs/kitchen/{}_{}".format(IMG_NAME, labels[idx]))
