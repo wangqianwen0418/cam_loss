@@ -1,9 +1,11 @@
 import keras.backend as K
 import numpy as np
-def my_loss(y_true, y_pred):
-    lambda_center = 0.5
-    lambda_area = 0.5
-    batch_size = 32
+
+lambda_center = 0.5
+lambda_area = 0.5
+
+
+def my_loss(batch_size):   
     pos_x = np.zeros((batch_size, 7,7, 1))
     pos_y =np.zeros((batch_size, 7,7, 1))
     for i in range(7):
@@ -11,21 +13,19 @@ def my_loss(y_true, y_pred):
         pos_y[:,:,i] = i
     pos_x = K.variable(value=pos_x)
     pos_y = K.variable(value=pos_y)
+
     def center_loss(y_true, y_pred):
         """
         # arguments:
         y_true: bouding boxes (x,y,h,w), shape(batch_size, 4).
         y_pred: cam heatmap, shape (batch_size, 7, 7, 1).
         """
-        global pos_x, pos_y
         bbox_c = y_true[:, :2]
         sum_v = K.expand_dims(K.sum(y_pred, axis=(1,2,3)))
         x_c = K.expand_dims(K.sum(y_pred * pos_x, axis=(1,2,3)))/sum_v
         y_c = K.expand_dims(K.sum(y_pred * pos_y, axis=(1,2,3)))/sum_v
         # print(K.int_shape(K.concatenate([x_c, y_c], axis=1)))
-        print(K.int_shape)
         heatmap_c = K.concatenate([x_c, y_c], axis=1) #shape(bs, 2)
-        print('shape of heatmap_c', K.int_shape(heatmap_c))
         x = heatmap_c - bbox_c
         x_abs = K.abs(x)
         x_bool = K.cast(K.less_equal(x_abs, 1.0), K.floatx())
@@ -48,18 +48,16 @@ def my_loss(y_true, y_pred):
             w0/7,
             "channels_last"
         )
-        y_pred = pred[:,:,:, 0]
+        y_pred = y_pred[:,:,:, 0]
         # normalize heatmap
         min = K.expand_dims(K.expand_dims(K.min(y_pred, axis=(1,2))))
-        min = K.repeat_elements(min, rep=7, axis=1)
-        min = K.repeat_elements(min, rep=7, axis= 2)
+        min = K.repeat_elements(min, rep=h0, axis=1)
+        min = K.repeat_elements(min, rep=w0, axis= 2)
         max = K.expand_dims(K.expand_dims(K.max(y_pred, axis=(1,2))))
-        max = K.repeat_elements(max, rep=7, axis=1)
-        max = K.repeat_elements(max, rep=7, axis= 2)
-        print("shape of y min", K.int_shape(min), K.eval(min))
+        max = K.repeat_elements(max, rep=h0, axis=1)
+        max = K.repeat_elements(max, rep=w0, axis= 2)
         y_pred = y_pred - min
         y_pred = y_pred/max
-        print("shape of y pred", K.int_shape(y_pred))
         
         y_box = np.zeros(K.int_shape(y_pred))
         for i in range(batch_size):
@@ -69,8 +67,8 @@ def my_loss(y_true, y_pred):
             y_box[i, int(x-w/2):int(x+w/2), int(y-h/2):int(y+h/2)] = 1
         y_box = K.variable(value=y_box)
 
-        v_in = K.expand_dims(K.sum(y_pred * y_box, axis=(1,2)))
-        v_out = K.expand_dims(K.sum(y_pred, axis=(1,2))) - v_in
+        v_in = K.sum(y_pred * y_box, axis=(1,2))
+        v_out = K.sum(y_pred, axis=(1,2)) - v_in
         return K.log(v_out/v_in)
 
         # threshold = 150
@@ -97,11 +95,9 @@ def my_loss(y_true, y_pred):
 
         #     return lambda_rpn_regr * K.sum(
         #         y_true[:, :, :, :4 * num_anchors] * (x_bool * (0.5 * x * x) + (1 - x_bool) * (x_abs - 0.5))) / K.sum(epsilon + y_true[:, :, :, :4 * num_anchors])
+    def total_loss(y_true, y_pred):
+        print("shape of area loss", K.int_shape(area_loss(y_true, y_pred)))
+        print("shape of center loss", K.int_shape(center_loss(y_true, y_pred)))
+        return lambda_area * area_loss(y_true, y_pred) + lambda_center * center_loss(y_true, y_pred)
+    return total_loss
 
-    box = np.random.randint(5, size=(batch_size, 4))
-    box = K.variable(value=box)
-    pred = np.random.randint(10, size=(batch_size, 7, 7, 1))
-    pred = K.variable(value=pred)
-    L
-    print(K.eval(center_loss(box, pred)))
-    print(K.eval(area_loss(box, pred)))
