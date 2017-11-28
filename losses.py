@@ -5,7 +5,13 @@ lambda_center = 0.5
 lambda_area = 0.5
 
 
-def my_loss(batch_size):   
+def my_loss(y_true, y_pred): 
+    """
+        # arguments:
+        y_true: bouding boxes (x,y,h,w), shape(batch_size, 4).
+        y_pred: cam heatmap, shape (batch_size, 7, 7, 1).
+        """  
+    batch_size = K.int_shape(y_pred)[0]
     pos_x = np.zeros((batch_size, 7,7, 1))
     pos_y =np.zeros((batch_size, 7,7, 1))
     for i in range(7):
@@ -15,11 +21,7 @@ def my_loss(batch_size):
     pos_y = K.variable(value=pos_y)
 
     def center_loss(y_true, y_pred):
-        """
-        # arguments:
-        y_true: bouding boxes (x,y,h,w), shape(batch_size, 4).
-        y_pred: cam heatmap, shape (batch_size, 7, 7, 1).
-        """
+        
         bbox_c = y_true[:, :2]
         sum_v = K.expand_dims(K.sum(y_pred, axis=(1,2,3)))
         x_c = K.expand_dims(K.sum(y_pred * pos_x, axis=(1,2,3)))/sum_v
@@ -35,11 +37,6 @@ def my_loss(batch_size):
         return K.sum(K.log(smooth_l1), axis=1)
 
     def area_loss(y_true, y_pred):
-        """
-        # arguments:
-        y_true: bouding boxes (x,y,h,w), shape(batch_size, 4).
-        y_pred: cam heatmap, shape (batch_size, 7, 7, 1).
-        """
         h0 =224
         w0=224
         y_pred = K.resize_images(
@@ -95,9 +92,10 @@ def my_loss(batch_size):
 
         #     return lambda_rpn_regr * K.sum(
         #         y_true[:, :, :, :4 * num_anchors] * (x_bool * (0.5 * x * x) + (1 - x_bool) * (x_abs - 0.5))) / K.sum(epsilon + y_true[:, :, :, :4 * num_anchors])
-    def total_loss(y_true, y_pred):
-        print("shape of area loss", K.int_shape(area_loss(y_true, y_pred)))
-        print("shape of center loss", K.int_shape(center_loss(y_true, y_pred)))
-        return lambda_area * area_loss(y_true, y_pred) + lambda_center * center_loss(y_true, y_pred)
+    # def total_loss(y_true, y_pred):
+    #     print("shape of area loss", K.int_shape(area_loss(y_true, y_pred)))
+    #     print("shape of center loss", K.int_shape(center_loss(y_true, y_pred)))
+    #     return lambda_area * area_loss(y_true, y_pred) + lambda_center * center_loss(y_true, y_pred)
+    total_loss = lambda_area * area_loss(y_true, y_pred) + lambda_center * center_loss(y_true, y_pred)
     return total_loss
 

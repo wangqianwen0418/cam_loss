@@ -6,6 +6,8 @@ from keras.models import Model
 
 import keras.backend as K
 
+from losses import my_loss
+
 num_classes = 1000
 
 class FC_layer(Layer):
