@@ -40,28 +40,31 @@ class FC_layer(Layer):
         return tuple(output_shape)
 
 def get_map(inputs):
-    maps = inputs[0]
+    maps = keras.layers.Reshape((1000, 7, 7))(inputs[0])
     labels = inputs[1]
     if K.ndim(maps)!=4:
         raise TypeError("maps is {}, should have 4 dimesions".format(K.int_shape(maps)))
-    idx = K.argmax(labels, axis=1)
-    print(K.int_shape(labels))
-    print(K.int_shape(idx))
+    idx = K.one_hot(K.argmax(labels, axis=1), K.int_shape(labels)[-1])
+    map = K.batch_dot(idx, maps, axes=[1,1]) # get heap map for the top1 prediction
+    print("map shape", K.int_shape(maps))
+    # print("labels shape", K.int_shape(labels))
+    print("idx", K.int_shape(idx))
+    # print("idx",K.eval(idx))
     # map = maps[:,:,:,idx]
     return maps
 
 
 base_model = ResNet50(weights=None, input_shape=(224,224,3), include_top=False,pooling="avg")
 last_conv = "activation_49"
-conv_features = base_model.get_layer(name=last_conv).output # tensor, shape (batch_size, 7, 7, 2048)
+conv_features = base_model.get_layer(name=last_conv).output # get the output of last conv, shape (batch_size, 7, 7, 2048)
 
-x = base_model.output
-fc_layer = FC_layer(num_classes, name="last_fc")
+x = base_model.output # the results after global avg, shape(batch_size, 2048)
+fc_layer = FC_layer(num_classes, name="last_fc") # custom fully connected layer, it is shared between "x" and "conv_feature"
 x = fc_layer(x)
 labels = layers.Activation("softmax")(x)
 
-y = fc_layer(conv_features) # shape(7,7,1000)
-heat_map = layers.Lambda(get_map)([y, x])
+maps = fc_layer(conv_features) # shape(7,7,1000)
+heat_map = layers.Lambda(get_map)([maps, x])
 
 model = Model(base_model.input, [labels, heat_map])
 # model.summary()
