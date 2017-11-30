@@ -1,11 +1,17 @@
-import numpy as np 
+from model import cam_model
+from keras import optimizers 
 from losses import my_loss
-import keras.backend as K
 batch_size = 32
-box = np.random.randint(5, size=(batch_size, 4))
-box = K.variable(value=box)
-pred = np.random.randint(10, size=(batch_size, 7, 7, 1))
-pred = K.variable(value=pred)
 
-loss = my_loss(batch_size)(box, pred)
-print(K.int_shape(loss))
+model = cam_model()
+model.summary()
+# print(K.int_shape(y))
+
+model.compile(optimizer=optimizers.Adam(),
+              loss={"label":"categorical_crossentropy", "map":my_loss(batch_size)},
+              metrics=['accuracy', 'accuracy'])
+
+
+# fc_weights = model.get_layer(name="fc1000").get_weights()
+# print(fc_weights[0].shape)# shape[2048, 10000]
+# # fc_copy = 
