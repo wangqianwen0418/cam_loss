@@ -23,3 +23,6 @@ yarn-error.log*
 # for model
 test.py
 imgs/
+
+# for coco dataset
+coco/

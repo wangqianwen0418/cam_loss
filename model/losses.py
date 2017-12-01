@@ -81,37 +81,22 @@ def my_loss(batch_size):
 
 
 def area_loss(y_true, y_pred):
-        (_, h, w, num_c) = K.int_shape(y_pred)
-        # (_, w0, h0, num_c) = K.int_shape(y_true)
-        h0 = 224
-        w0 = 224
-        y_pred = K.resize_images(
-            y_pred,
-            h0/h,
-            w0/w,
-            "channels_last"
-        )
-        # normalize heatmap
-        # min = K.expand_dims(K.expand_dims(K.min(y_pred, axis=(1,2))))
-        # min = K.repeat_elements(min, rep=h0, axis=1)
-        # min = K.repeat_elements(min, rep=w0, axis= 2)
-        # max = K.expand_dims(K.expand_dims(K.max(y_pred, axis=(1,2))))
-        # max = K.repeat_elements(max, rep=h0, axis=1)
-        # max = K.repeat_elements(max, rep=w0, axis= 2)
+    (_, h, w, num_c) = K.int_shape(y_pred)
+    # (_, w0, h0, num_c) = K.int_shape(y_true)
+    
+    # normalize heatmap
+    # min = K.expand_dims(K.expand_dims(K.min(y_pred, axis=(1,2))))
+    # min = K.repeat_elements(min, rep=h0, axis=1)
+    # min = K.repeat_elements(min, rep=w0, axis= 2)
+    # max = K.expand_dims(K.expand_dims(K.max(y_pred, axis=(1,2))))
+    # max = K.repeat_elements(max, rep=h0, axis=1)
+    # max = K.repeat_elements(max, rep=w0, axis= 2)
 
-        min = K.min(y_pred)
-        max = K.max(y_pred)
-        y_pred = y_pred - min
-        y_pred = y_pred/max #shape (None, h0,w0)
+    min = K.min(y_pred)
+    max = K.max(y_pred)
+    y_pred = y_pred - min
+    y_pred = y_pred/max #shape (None, h0,w0, 1)
 
-        # y_box = np.zeros((batch_size, h, w, num_c))
-        # for i in range(batch_size):
-        #     box_info = K.eval(y_true[i,:]) # (x, y, w,h)
-        #     [x, y, w, h] = box_info
-        #     # print("box", K.eval(x-w/2), K.eval(x+w/2),K.eval(y-h/2),K.eval(y+h/2))
-        #     y_box[i, int(x-w/2):int(x+w/2), int(y-h/2):int(y+h/2)] = 1
-        # y_box = K.variable(value=y_box)
-
-        v_in = K.sum(y_pred*y_true, axis=(1,2,3))
-        v_out = K.sum(y_pred, axis=(1,2,3)) - v_in
-        return K.log(v_out/v_in)
+    v_in = K.sum(y_pred*y_true, axis=(1,2,3))
+    v_out = K.sum(y_pred, axis=(1,2,3)) - v_in
+    return K.log(v_out/v_in)

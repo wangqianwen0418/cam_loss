@@ -6,13 +6,13 @@ from keras import layers
 from keras.models import Model
 from keras.layers import dot, Reshape
 from keras import optimizers 
-import keras.preprocessing.image.ImageDataGenerator as ImageDataGenerator
+from keras.preprocessing.image  import ImageDataGenerator
 
 import keras.backend as K
 # K.set_learning_phase(1)  # 1 for training, 0 for testing
 
 from losses import area_loss
-from get_coco import COCOGenerator, COCODataset
+from get_coco import COCOData
 
 import os
 
@@ -59,10 +59,17 @@ def get_map(inputs):
     (bs, h, w, num_c) = K.int_shape(inputs[0])
     maps = Reshape((num_c, h*w))(inputs[0]) # shape (None, 1000, 49)
     labels = inputs[1]
-    print("labels shape", K.int_shape(labels))
     idx = K.expand_dims(K.one_hot(K.argmax(labels, axis=1), K.int_shape(labels)[1]))# shape (None, 1000)
     map = dot([idx, maps], axes=1) # get heap map for the top1 prediction, shape (None, 49)
     map = Reshape((h, w, 1))(map) # shape, (None, 7, 7, 1)
+    h0 = 224
+    w0 = 224
+    map = K.resize_images(
+        map,
+        target_size[0]/h,
+        target_size[1]/w,
+        "channels_last"
+    )
     # print("map shape", K.int_shape(map))
     return map
 
@@ -81,17 +88,17 @@ labels = layers.Activation("softmax", name="label")(x)
 maps = fc_layer(conv_features) # shape(7,7,1000)
 heat_map = layers.Lambda(get_map, name="map")([maps, x])
 model = Model(base_model.input, [labels, heat_map])
-model.summary()
+# model.summary()
 
 model.compile(optimizer=optimizers.Adam(),
               loss={"label":"categorical_crossentropy", "map":area_loss},
-              metrics=['accuracy', 'accuracy'])
+              loss_weights = [1, 0.02],
+              metrics=['accuracy'])
 
 # get data
 
-coco = COCODataset(data_dir="../data/coco/", COI=COI, img_set="train")
-coco_generator = COCOGenerator(coco, batch_size, target_size)
+cocodata = COCOData(data_dir="../data/coco/", COI=['cat'], img_set="train", batch_size=batch_size, target_size=target_size)
 
-model.fit_generator(coco_generator.generate(),
-            samples_per_epoch=samples_per_epoch,
-            nb_epoch=nb_epoch)
+model.fit_generator(cocodata.generate(bbox=True),
+            steps_per_epoch=cocodata.num_images//batch_size,
+            epochs=epochs)

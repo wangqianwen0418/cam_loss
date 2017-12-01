@@ -70,7 +70,6 @@ class COCOData(object):
                 catId = ann['category_id']
                 try:
                     j = self.catIds.index(catId)
-                    print("j", j)
                     bag_labels[i, j+1] = 1 # bag_labels[i:0]=1, none of the cats interested exists
                 except ValueError:
                     pass
@@ -98,7 +97,7 @@ class COCOData(object):
         img = self.coco.loadImgs([imgId])[0]
         annId = self.coco.getAnnIds(imgId)
         anns = self.coco.loadAnns(annId)
-        bbox = np.zeros(self.target_size)
+        bbox = np.zeros(self.target_size+(1,))
         neg_sample = True
         for ann in anns:
             if ann['category_id'] in self.catIds:
@@ -109,9 +108,9 @@ class COCOData(object):
                 w *= scale[0]
                 y *= scale[1]
                 h *= scale[1]
-                bbox[int(x):int(x+w), int(y):int(y+h)] = 1
+                bbox[int(x):int(x+w), int(y):int(y+h),:] = 1
         if neg_sample:
-            bbox[:, :] = 1
+            bbox[:, :,:] = 1
         return bbox
         
         
@@ -137,7 +136,7 @@ class COCOData(object):
         batch_x = np.zeros((self.batch_size,) + self.target_size + (3,) , dtype=np.float32)
         batch_y = np.zeros((self.batch_size, len(self.catIds)+1), dtype=np.int16)
         if bbox:
-            batch_bbox = np.zeros((self.batch_size,) + self.target_size , dtype=np.float32)
+            batch_bbox = np.zeros((self.batch_size,) + self.target_size +(1,) , dtype=np.float32)
         db_inds = self._get_next_minibatch_inds()
         for i, db_ind in enumerate(db_inds):
             x = self.imgarr_at(db_ind, self.target_size)
@@ -176,10 +175,10 @@ class COCOData(object):
         x, y = self._get_next_minibatch(bbox)
         return (x, y)
 
-if __name__ == '__main__':
-    coco = COCOData(data_dir="../data/coco/", COI=['cat'], img_set="train", batch_size=32, target_size=(224, 224))
+# if __name__ == '__main__':
+#     coco = COCOData(data_dir="../data/coco/", COI=['cat'], img_set="train", batch_size=32, target_size=(224, 224))
 
-    for i in range(4):
-        (x, y) = coco.next()
-        print(x.shape, y)
+#     for i in range(4):
+#         (x, y) = coco.next()
+#         print(x.shape, y)
 
