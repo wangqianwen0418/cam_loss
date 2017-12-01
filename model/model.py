@@ -6,14 +6,24 @@ from keras import layers
 from keras.models import Model
 from keras.layers import dot, Reshape
 from keras import optimizers 
+import keras.preprocessing.image.ImageDataGenerator as ImageDataGenerator
 
 import keras.backend as K
 # K.set_learning_phase(1)  # 1 for training, 0 for testing
 
 from losses import area_loss
+from get_coco import COCOGenerator, COCODataset
 
-num_classes = 1000
+import os
+
+
 batch_size = 32
+target_size = (224, 224)
+COI = ['cat']
+epochs = 50
+iter_epo = 3
+rel_layers = [5, 5, 5]
+num_classes = len(COI) + 1
 
 
 class FC_layer(Layer):
@@ -57,8 +67,9 @@ def get_map(inputs):
     return map
 
 
-base_model = VGG19(weights=None, input_shape=(224,224,3), include_top=False,pooling="avg")
-# last_conv = "activation_49" # for resnet56
+# base_model = ResNet50(weights="imagenet", input_shape=target_size + (3,), include_top=False,pooling="avg")
+# last_conv = "activation_49" # for resnet50
+base_model = VGG19(weights="imagenet", input_shape=target_size + (3,), include_top=False,pooling="avg")
 last_conv = "block5_pool" # for vgg19 
 conv_features = base_model.get_layer(name=last_conv).output # get the output of last conv, shape (batch_size, 7, 7, 2048)
 
@@ -71,13 +82,16 @@ maps = fc_layer(conv_features) # shape(7,7,1000)
 heat_map = layers.Lambda(get_map, name="map")([maps, x])
 model = Model(base_model.input, [labels, heat_map])
 model.summary()
-# print(K.int_shape(y))
 
 model.compile(optimizer=optimizers.Adam(),
               loss={"label":"categorical_crossentropy", "map":area_loss},
               metrics=['accuracy', 'accuracy'])
 
+# get data
 
-# fc_weights = model.get_layer(name="fc1000").get_weights()
-# print(fc_weights[0].shape)# shape[2048, 10000]
-# # fc_copy = 
+coco = COCODataset(data_dir="../data/coco/", COI=COI, img_set="train")
+coco_generator = COCOGenerator(coco, batch_size, target_size)
+
+model.fit_generator(coco_generator.generate(),
+            samples_per_epoch=samples_per_epoch,
+            nb_epoch=nb_epoch)
