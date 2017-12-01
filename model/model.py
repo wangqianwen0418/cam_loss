@@ -24,6 +24,7 @@ epochs = 50
 iter_epo = 3
 rel_layers = [5, 5, 5]
 num_classes = len(COI) + 1
+bbox = False
 
 
 class FC_layer(Layer):
@@ -87,18 +88,33 @@ labels = layers.Activation("softmax", name="label")(x)
 
 maps = fc_layer(conv_features) # shape(7,7,1000)
 heat_map = layers.Lambda(get_map, name="map")([maps, x])
-model = Model(base_model.input, [labels, heat_map])
-# model.summary()
 
-model.compile(optimizer=optimizers.Adam(),
-              loss={"label":"categorical_crossentropy", "map":area_loss},
-              loss_weights = [1, 0.02],
-              metrics=['accuracy'])
+if bbox:
+    model = Model(base_model.input, [labels, heat_map])
 
-# get data
+    model.compile(optimizer=optimizers.Adam(),
+                loss={"label":"categorical_crossentropy", "map":area_loss},
+                loss_weights = [1, 0.02],
+                metrics=['accuracy'])
 
-cocodata = COCOData(data_dir="../data/coco/", COI=['cat'], img_set="train", batch_size=batch_size, target_size=target_size)
+    # get data
 
-model.fit_generator(cocodata.generate(bbox=True),
-            steps_per_epoch=cocodata.num_images//batch_size,
-            epochs=epochs)
+    cocodata = COCOData(data_dir="../data/coco/", COI=['cat'], img_set="train", batch_size=batch_size, target_size=target_size)
+
+    model.fit_generator(cocodata.generate(bbox),
+                steps_per_epoch=cocodata.num_images//batch_size,
+                epochs=epochs)
+
+else:
+    model = Model(base_model.input, labels)
+    model.compile(optimizer=optimizers.Adam(),
+                loss="categorical_crossentropy",
+                metrics=['accuracy'])
+
+    # get data
+
+    cocodata = COCOData(data_dir="../data/coco/", COI=['cat'], img_set="train", batch_size=batch_size, target_size=target_size)
+
+    model.fit_generator(cocodata.generate(bbox),
+                steps_per_epoch=cocodata.num_images//batch_size,
+                epochs=epochs)
