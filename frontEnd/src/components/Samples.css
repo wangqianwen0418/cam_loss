@@ -1,0 +1,5 @@
+.samples{
+    width: 100%;
+    height: calc(var(--ratio-samples) * (100vh - 70px));
+    border-right: 1px solid #e9e9e9;
+}

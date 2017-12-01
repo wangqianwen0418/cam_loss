@@ -1,8 +1,9 @@
 
 import * as React from 'react';
 import "./App.css";
-import SiderBar from "../containers/SideBar";
-import Graph from "./Graph";
+import Samples from "../containers/Samples";
+import Annotation from "../containers/Annotation";
+import Model from "../containers/Model";
 
 import { Row, Col} from 'antd';
 
@@ -19,9 +20,12 @@ class App extends React.Component{
                   </Col>
                 </Row>
                 <Row>
-                    <Col span={3}><SiderBar /></Col>
-                    <Col span={21}>
-                        <Graph/>
+                    <Col span={18}>
+                        <Samples />
+                        <Annotation/>
+                    </Col>
+                    <Col span={6}>
+                        <Model/>
                     </Col>
                 </Row>
             </div>

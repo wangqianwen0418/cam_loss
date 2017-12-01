@@ -1,7 +1,7 @@
 .sideBar{
     height:calc(100vh - 70px);
-    /* border-right: 1px solid #e9e9e9; */
-    background: #333;
+    border-right: 1px solid #e9e9e9;
+    /* background: #333; */
 }
 .ant-menu-inline{
     border-right: none !important;

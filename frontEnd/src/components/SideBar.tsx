@@ -44,14 +44,13 @@ class SiderBar extends React.Component<Props, any> {
 
                         <div className="fakefile">
                             {/* <input type="button" value="Import Model" /> */}
-                            <Button className="inputButton ant-menu-dark">
+                            <Button className="inputButton ">
                                 <span className="menuItem"><Icon type="folder-open" />Import Model</span>
                             </Button>
                         </div>
                     </div>
                 </span>
                 <Menu
-                    theme="dark"
                     onClick={this.handleClick}
                     defaultSelectedKeys={[]}
                     defaultOpenKeys={['add_layers', 'conv_layers']}

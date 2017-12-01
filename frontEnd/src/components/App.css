@@ -1,22 +1,11 @@
-.hello {
-    text-align: center;
-    margin: 0px;
-    font-size: 48px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: gray;
-  }
+:root{
+ --ratio-samples:0.4;
+}
 
-  
-  .hello button {
-    margin-left: 25px;
-    margin-right: 25px;
-    font-size: 40px;
-    min-width: 50px;
-  }
-
-  .header{
+.header{
     padding: 10px 20px;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    box-shadow: 0px 4px 4px 0 rgba(0,0,0,0.16);
     font-size: 40px;
     height: 70px;
     background-color: #49a9ee;
