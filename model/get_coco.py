@@ -4,7 +4,7 @@ import numpy as np
 
 from keras.preprocessing.image import load_img, img_to_array
 
-class COCODataset(object):
+class COCOData(object):
     def __init__(self, data_dir, COI=['cat'], img_set='train', batch_size=32, target_size=(224, 224)):
         if img_set not in ['train', 'val', 'test']:
             raise ValueError('img_set should be neither `train`, `val` or `test` ') 
@@ -18,6 +18,7 @@ class COCODataset(object):
         self.catIds =self.coco.getCatIds(catNms=self.catNms)
         # self.imgIds = self.coco.getImgIds(catIds=self.catIds)
         self.imgIds = self.gt_img_ids()
+        self.imgs = self.coco.loadImgs(self.imgIds)
         self.annIds = self.coco.getAnnIds(imgIds=self.imgIds, iscrowd=0)
 
         self.batch_size = batch_size
@@ -28,32 +29,33 @@ class COCODataset(object):
         self.perm = np.random.permutation(np.arange(self.num_images))
         self.target_size = target_size
 
-        self.imgs = self.coco.loadImgs(self.imgIds)
+        
 
     def gt_img_ids(self):
         # hack for now, pos: cat&chiar or cat&couch, neg: only chair or couch
-        negIds = coco.getCatIds(CatNms=['chair', 'couch'])
-        pos_1 = coco.getImgIds(catIds=[self.catIds, negIds[0]])
-        pos_2 = coco.getImgIds(catIds=[self.catIds, negIds[1]])
+        negIds = self.coco.getCatIds(catNms=['chair', 'couch'])
+        pos_1 = self.coco.getImgIds(catIds=self.catIds +[negIds[0]])
+        pos_2 = self.coco.getImgIds(catIds=self.catIds + [negIds[1]])
         pos_samples = pos_1
         for sample in pos_2:
             if sample not in pos_samples:
-                pos_samples.push(sample)
+                pos_samples.append(sample)
 
-        neg_1 = coco.getImgIds(catIds=[negIds[0]])
+        neg_1 = self.coco.getImgIds(catIds=[negIds[0]])
         neg_samples = []
+        i = 0
         while i < len(pos_samples)//2:
             sample = neg_1.pop()
             if (sample not in pos_samples) and (sample not in neg_samples):
                 i += 1
-                neg_samples.push(sample)
-        neg_2 = coco.getImgIds(catIds=[negIds[1]])
-
+                neg_samples.append(sample)
+        neg_2 = self.coco.getImgIds(catIds=[negIds[1]])
+        i = 0
         while i < len(pos_samples)//2:
             sample = neg_2.pop()
             if (sample not in pos_samples) and (sample not in neg_samples):
                 i += 1
-                neg_samples.push(sample)
+                neg_samples.append(sample)
         return pos_samples + neg_samples
 
 
@@ -93,6 +95,7 @@ class COCODataset(object):
         bbox: bbox in the form of an numpy array
         """
         imgId = self.imgIds[ind]
+        img = self.coco.loadImgs([imgId])[0]
         annId = self.coco.getAnnIds(imgId)
         anns = self.coco.loadAnns(annId)
         bbox = np.zeros(self.target_size)
@@ -101,12 +104,12 @@ class COCODataset(object):
             if ann['category_id'] in self.catIds:
                 neg_sample = False
                 x, y, w, h = ann['bbox']
-                scale = [self.target_size[0]/ann['width'], self.target_size[1]/ann['height']]
+                scale = [self.target_size[0]/img['width'], self.target_size[1]/img['height']]
                 x *= scale[0]
                 w *= scale[0]
                 y *= scale[1]
                 h *= scale[1]
-                bbox[x:x+w, y:y+h] = 1
+                bbox[int(x):int(x+w), int(y):int(y+h)] = 1
         if neg_sample:
             bbox[:, :] = 1
         return bbox
@@ -169,15 +172,14 @@ class COCODataset(object):
             x, y = self._get_next_minibatch(bbox)
             yield (x, y)
     
-    def next(self):
-        x, y = self._get_next_minibatch()
+    def next(self, bbox=True):
+        x, y = self._get_next_minibatch(bbox)
         return (x, y)
 
 if __name__ == '__main__':
-    coco = COCODataset(data_dir="./data/coco/", COI=['cat'], img_set="train")
-    coco_generator = COCOGenerator(coco)
+    coco = COCOData(data_dir="../data/coco/", COI=['cat'], img_set="train", batch_size=32, target_size=(224, 224))
 
     for i in range(4):
-        (x, y) = coco_generator.next()
+        (x, y) = coco.next()
         print(x.shape, y)
 
