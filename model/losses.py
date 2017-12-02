@@ -93,10 +93,10 @@ def area_loss(y_true, y_pred):
     # max = K.repeat_elements(max, rep=w0, axis= 2)
 
     min = K.min(y_pred)
-    max = K.max(y_pred)
     y_pred = y_pred - min
+    max = K.max(y_pred)
     y_pred = y_pred/max #shape (None, h0,w0, 1)
 
     v_in = K.sum(y_pred*y_true, axis=(1,2,3))
     v_out = K.sum(y_pred, axis=(1,2,3)) - v_in
-    return K.log(v_out/v_in)
+    return K.log(v_out/v_in+1)

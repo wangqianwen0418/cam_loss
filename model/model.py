@@ -15,16 +15,17 @@ from losses import area_loss
 from get_coco import COCOData
 
 import os
+import argparser
 
 
-batch_size = 32
+batch_size = 16
 target_size = (224, 224)
 COI = ['cat']
 epochs = 50
 iter_epo = 3
 rel_layers = [5, 5, 5]
-num_classes = len(COI) + 1
-bbox = False
+num_classes = 1
+bbox = True
 
 
 class FC_layer(Layer):
@@ -82,39 +83,53 @@ last_conv = "block5_pool" # for vgg19
 conv_features = base_model.get_layer(name=last_conv).output # get the output of last conv, shape (batch_size, 7, 7, 2048)
 
 x = base_model.output # the results after global avg, shape(batch_size, 2048)
+# x = keras.layers.Dense(512, activation='relu')(x)
+# x = keras.layers.Dense(256, activation='relu')(x)
 fc_layer = FC_layer(num_classes, name="last_fc") # custom fully connected layer, it is shared between "x" and "conv_feature"
 x = fc_layer(x)
-labels = layers.Activation("softmax", name="label")(x)
+labels = layers.Activation("sigmoid", name="label")(x)
 
 maps = fc_layer(conv_features) # shape(7,7,1000)
 heat_map = layers.Lambda(get_map, name="map")([maps, x])
+
+for layer in base_model.layers:
+    layer.trainable = False
+
+# get data
+cocodata_train = COCOData(data_dir="../data/coco/", COI=['cat'], img_set="train", batch_size=batch_size, target_size=target_size)
+cocodata_val = COCOData(data_dir="../data/coco/", COI=['cat'], img_set="val", batch_size=batch_size, target_size=target_size)
+
+## callbacks to save the best model
+parser = argparse.ArgumentParser()
+parser.add_argument("--exp", required=True)
+args = parser.parse_args()
+exp = args.exp
+check_point = keras.callbacks.ModelCheckpoint("save_model/vgg16_{}.h5".format(exp), monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False)
+tf_log = keras.callbacks.TensorBoard(log_dir='save_model/tf_logs_{}'.format(exp), batch_size=batch_size, write_graph=True)
+callbacks = [check_point, tf_log]
+
 
 if bbox:
     model = Model(base_model.input, [labels, heat_map])
 
     model.compile(optimizer=optimizers.Adam(),
-                loss={"label":"categorical_crossentropy", "map":area_loss},
-                loss_weights = [1, 0.02],
+                loss={"label":"binary_crossentropy", "map":area_loss},
+                loss_weights = [1, 0.2],
                 metrics=['accuracy'])
-
-    # get data
-
-    cocodata = COCOData(data_dir="../data/coco/", COI=['cat'], img_set="train", batch_size=batch_size, target_size=target_size)
-
-    model.fit_generator(cocodata.generate(bbox),
-                steps_per_epoch=cocodata.num_images//batch_size,
-                epochs=epochs)
 
 else:
     model = Model(base_model.input, labels)
-    model.compile(optimizer=optimizers.Adam(),
-                loss="categorical_crossentropy",
+    model.compile(optimizer='adam',
+                loss="binary_crossentropy",
                 metrics=['accuracy'])
 
-    # get data
+    
 
-    cocodata = COCOData(data_dir="../data/coco/", COI=['cat'], img_set="train", batch_size=batch_size, target_size=target_size)
+model.fit_generator(cocodata_train.generate(bbox),
+            steps_per_epoch=cocodata_train.num_images//batch_size,
+            validation_split = 
+            validation_data = cocodata_val.generate(bbox),
+            validation_steps = cocodata_val.num_images//batch_size,
+            epochs=epochs, callbacks=callbacks)
 
-    model.fit_generator(cocodata.generate(bbox),
-                steps_per_epoch=cocodata.num_images//batch_size,
-                epochs=epochs)
+

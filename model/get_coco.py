@@ -3,6 +3,7 @@ import os
 import numpy as np
 
 from keras.preprocessing.image import load_img, img_to_array
+from keras.applications.imagenet_utils import preprocess_input
 
 class COCOData(object):
     def __init__(self, data_dir, COI=['cat'], img_set='train', batch_size=32, target_size=(224, 224)):
@@ -32,7 +33,7 @@ class COCOData(object):
         
 
     def gt_img_ids(self):
-        # hack for now, pos: cat&chiar or cat&couch, neg: only chair or couch
+        # hack for now, positive: cat&chiar or cat&couch, negative: only chair or couch
         negIds = self.coco.getCatIds(catNms=['chair', 'couch'])
         pos_1 = self.coco.getImgIds(catIds=self.catIds +[negIds[0]])
         pos_2 = self.coco.getImgIds(catIds=self.catIds + [negIds[1]])
@@ -44,14 +45,14 @@ class COCOData(object):
         neg_1 = self.coco.getImgIds(catIds=[negIds[0]])
         neg_samples = []
         i = 0
-        while i < len(pos_samples)//2:
+        while i < int(0.2*len(pos_1)):
             sample = neg_1.pop()
             if (sample not in pos_samples) and (sample not in neg_samples):
                 i += 1
                 neg_samples.append(sample)
         neg_2 = self.coco.getImgIds(catIds=[negIds[1]])
         i = 0
-        while i < len(pos_samples)//2:
+        while i < int(0.2*len(pos_2)):
             sample = neg_2.pop()
             if (sample not in pos_samples) and (sample not in neg_samples):
                 i += 1
@@ -61,18 +62,21 @@ class COCOData(object):
 
 
     def gt_bag_labels(self):
-        bag_labels = np.zeros((len(self.imgIds),len(self.catIds)+1))
+        # bag_labels = np.zeros((len(self.imgIds),len(self.catIds)+1))
+        bag_labels = np.zeros((len(self.imgIds),1))
         for i, img in enumerate(self.imgs):
             imgId = img['id']
             annIds = self.coco.getAnnIds(imgIds=imgId)
             anns = self.coco.loadAnns(annIds)
             for ann in  anns:
                 catId = ann['category_id']
-                try:
-                    j = self.catIds.index(catId)
-                    bag_labels[i, j+1] = 1 # bag_labels[i:0]=1, none of the cats interested exists
-                except ValueError:
-                    pass
+                if catId in self.catIds:
+                    bag_labels[i,0] = 1
+                # try:
+                #     j = self.catIds.index(catId)
+                #     bag_labels[i, j+1] = 1 # bag_labels[i:0]=1, none of the cats interested exists
+                # except ValueError:
+                #     pass
         return bag_labels
 
     def imgarr_at(self, ind, target_size):
@@ -86,6 +90,7 @@ class COCOData(object):
         fpath = os.path.join('{}/{}2017'.format(self.data_dir, self.img_set), img['file_name']) 
         img = load_img(fpath, grayscale=False, target_size=target_size)
         x = img_to_array(img, data_format="channels_last") # channels_last for tf, channels_first for theano
+        x = preprocess_input(x)
         return x
 
     def gt_bbox_at(self, ind):
@@ -134,7 +139,8 @@ class COCOData(object):
             batch_y: num_bag x 80
         """
         batch_x = np.zeros((self.batch_size,) + self.target_size + (3,) , dtype=np.float32)
-        batch_y = np.zeros((self.batch_size, len(self.catIds)+1), dtype=np.int16)
+        # batch_y = np.zeros((self.batch_size, len(self.catIds)+1), dtype=np.int16)
+        batch_y = np.zeros((self.batch_size, 1), dtype=np.int16)
         if bbox:
             batch_bbox = np.zeros((self.batch_size,) + self.target_size +(1,) , dtype=np.float32)
         db_inds = self._get_next_minibatch_inds()
