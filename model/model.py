@@ -7,6 +7,7 @@ from keras.models import Model
 from keras.layers import dot, Reshape
 from keras import optimizers 
 from keras.preprocessing.image  import ImageDataGenerator
+from keras.callbacks import TensorBoard, ModelCheckpoint
 
 import keras.backend as K
 # K.set_learning_phase(1)  # 1 for training, 0 for testing
@@ -15,18 +16,29 @@ from losses import area_loss
 from get_coco import COCOData
 
 import os
-import argparser
+import argparse
 
 
 batch_size = 16
 target_size = (224, 224)
 COI = ['cat']
 epochs = 50
-iter_epo = 3
-rel_layers = [5, 5, 5]
+r_blk = 2 # number of blocks to learn
+model_name = "vgg19"
+#number of layers at each block
+if model_name == "vgg19":
+    blk_layers = [4,3,5,5,6]
+else:
+    blk_layers =  [5, 12, 10, 10, 12, 10, 10, 10, 12,  10, 10, 10, 10, 10, 12, 10, 12]
 num_classes = 1
-bbox = True
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--exp", type=str, required=True)
+parser.add_argument("--bbox", type=bool, default=False)
+args = parser.parse_args()
+
+exp = args.exp
+bbox = args.bbox
 
 class FC_layer(Layer):
     def __init__(self, units, **kwargs):
@@ -76,10 +88,13 @@ def get_map(inputs):
     return map
 
 
-# base_model = ResNet50(weights="imagenet", input_shape=target_size + (3,), include_top=False,pooling="avg")
-# last_conv = "activation_49" # for resnet50
-base_model = VGG19(weights="imagenet", input_shape=target_size + (3,), include_top=False,pooling="avg")
-last_conv = "block5_pool" # for vgg19 
+
+if model_name == "vgg19":
+    base_model = VGG19(weights="imagenet", input_shape=target_size + (3,), include_top=False,pooling="avg")
+    last_conv = "block5_pool" # for vgg19 
+else:
+    base_model = ResNet50(weights="imagenet", input_shape=target_size + (3,), include_top=False,pooling="avg")
+    last_conv = "activation_49" # for resnet50
 conv_features = base_model.get_layer(name=last_conv).output # get the output of last conv, shape (batch_size, 7, 7, 2048)
 
 x = base_model.output # the results after global avg, shape(batch_size, 2048)
@@ -100,12 +115,9 @@ cocodata_train = COCOData(data_dir="../data/coco/", COI=['cat'], img_set="train"
 cocodata_val = COCOData(data_dir="../data/coco/", COI=['cat'], img_set="val", batch_size=batch_size, target_size=target_size)
 
 ## callbacks to save the best model
-parser = argparse.ArgumentParser()
-parser.add_argument("--exp", required=True)
-args = parser.parse_args()
-exp = args.exp
-check_point = keras.callbacks.ModelCheckpoint("save_model/vgg16_{}.h5".format(exp), monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False)
-tf_log = keras.callbacks.TensorBoard(log_dir='save_model/tf_logs_{}'.format(exp), batch_size=batch_size, write_graph=True)
+
+check_point = ModelCheckpoint("save_model/{}_{}.h5".format(model_name, exp), monitor='val_acc', verbose=0, save_best_only=True, save_weights_only=False)
+tf_log = TensorBoard(log_dir='save_model/tf_logs_{}_{}'.format(model_name, exp), batch_size=batch_size, write_graph=True)
 callbacks = [check_point, tf_log]
 
 
@@ -127,9 +139,36 @@ else:
 
 model.fit_generator(cocodata_train.generate(bbox),
             steps_per_epoch=cocodata_train.num_images//batch_size,
-            validation_split = 
             validation_data = cocodata_val.generate(bbox),
             validation_steps = cocodata_val.num_images//batch_size,
             epochs=epochs, callbacks=callbacks)
+
+
+for i in range(r_blk):
+    i = i+1
+    if i==r_blk:
+        cbs = callbacks
+    else:
+        cbs = None
+    num_free_layers = sum(blk_layers[-i:])
+    for layer in base_model.layers[:-num_free_layers]:
+        layer.trainable = False
+    for layer in base_model.layers[-num_free_layers:]:
+        layer.trainable = True
+    if bbox:
+        model.compile(optimizer=optimizers.Adam(),
+                loss={"label":"binary_crossentropy", "map":area_loss},
+                loss_weights = [1, 0.2],
+                metrics=['accuracy'])
+    else:
+        model.compile(optimizer='adam',
+                loss="binary_crossentropy",
+                metrics=['accuracy'])
+    print("free the last {} layers".format(num_free_layers))
+    model.fit_generator(cocodata_train.generate(bbox),
+            steps_per_epoch=cocodata_train.num_images//batch_size,
+            validation_data = cocodata_val.generate(bbox),
+            validation_steps = cocodata_val.num_images//batch_size,
+            epochs=epochs, callbacks=cbs)
 
 

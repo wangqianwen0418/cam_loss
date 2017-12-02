@@ -144,6 +144,7 @@ class COCOData(object):
         if bbox:
             batch_bbox = np.zeros((self.batch_size,) + self.target_size +(1,) , dtype=np.float32)
         db_inds = self._get_next_minibatch_inds()
+        # print("in generator", db_inds)
         for i, db_ind in enumerate(db_inds):
             x = self.imgarr_at(db_ind, self.target_size)
             # x = self.image_data_generator.random_transform(x) # implement data agument later
