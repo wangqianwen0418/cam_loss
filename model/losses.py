@@ -99,4 +99,8 @@ def area_loss(y_true, y_pred):
 
     v_in = K.sum(y_pred*y_true, axis=(1,2,3))
     v_out = K.sum(y_pred, axis=(1,2,3)) - v_in
-    return K.log(v_out/v_in+1)
+    x = v_out/v_in
+    x_bool = K.cast(K.less_equal(x, 1.0), K.floatx())
+    loss = x_bool * (0.5 * x * x) + (1 - x_bool) * (x - 0.5)
+    # loss = K.log(v_out/v_in+1)
+    return loss

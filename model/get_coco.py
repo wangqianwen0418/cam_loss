@@ -45,14 +45,14 @@ class COCOData(object):
         neg_1 = self.coco.getImgIds(catIds=[negIds[0]])
         neg_samples = []
         i = 0
-        while i < int(0.2*len(pos_1)):
+        while i < int(0.8*len(pos_1)):
             sample = neg_1.pop()
             if (sample not in pos_samples) and (sample not in neg_samples):
                 i += 1
                 neg_samples.append(sample)
         neg_2 = self.coco.getImgIds(catIds=[negIds[1]])
         i = 0
-        while i < int(0.2*len(pos_2)):
+        while i < int(0.8*len(pos_2)):
             sample = neg_2.pop()
             if (sample not in pos_samples) and (sample not in neg_samples):
                 i += 1

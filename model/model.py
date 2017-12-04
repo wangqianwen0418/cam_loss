@@ -8,6 +8,7 @@ from keras.layers import dot, Reshape
 from keras import optimizers 
 from keras.preprocessing.image  import ImageDataGenerator
 from keras.callbacks import TensorBoard, ModelCheckpoint
+from keras.optimizers import SGD
 
 import keras.backend as K
 # K.set_learning_phase(1)  # 1 for training, 0 for testing
@@ -34,11 +35,12 @@ num_classes = 1
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--exp", type=str, required=True)
-parser.add_argument("--bbox", type=bool, default=False)
+parser.add_argument("--bbox", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], required=True)
 args = parser.parse_args()
 
 exp = args.exp
 bbox = args.bbox
+print("bbox", bbox)
 
 class FC_layer(Layer):
     def __init__(self, units, **kwargs):
@@ -156,12 +158,12 @@ for i in range(r_blk):
     for layer in base_model.layers[-num_free_layers:]:
         layer.trainable = True
     if bbox:
-        model.compile(optimizer=optimizers.Adam(),
+        model.compile(optimizer=SGD(lr=1e-4, momentum=0.9),
                 loss={"label":"binary_crossentropy", "map":area_loss},
-                loss_weights = [1, 0.2],
+                loss_weights = [1, 0.4],
                 metrics=['accuracy'])
     else:
-        model.compile(optimizer='adam',
+        model.compile(optimizer=SGD(lr=1e-5, momentum=0.9),
                 loss="binary_crossentropy",
                 metrics=['accuracy'])
     print("free the last {} layers".format(num_free_layers))
