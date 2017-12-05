@@ -1,15 +1,16 @@
 from pycocotools.coco import COCO 
 import os
 import numpy as np
+import math
 
 from keras.preprocessing.image import load_img, img_to_array
 from keras.applications.imagenet_utils import preprocess_input
 
 class COCOData(object):
-    def __init__(self, data_dir, COI=['cat'], img_set='train', batch_size=32, target_size=(224, 224)):
+    def __init__(self, data_dir, COI=['cat'], img_set='train', year=2017, batch_size=32, target_size=(224, 224)):
         if img_set not in ['train', 'val', 'test']:
             raise ValueError('img_set should be neither `train`, `val` or `test` ') 
-        annFile = os.path.join(data_dir, 'annotations/instances_{}2017.json'.format(img_set))
+        annFile = os.path.join(data_dir, 'annotations/instances_{}{}.json'.format(img_set, year))
 
         self.data_dir = data_dir
         self.img_set = img_set
@@ -29,6 +30,7 @@ class COCOData(object):
         self.cur = 0
         self.perm = np.random.permutation(np.arange(self.num_images))
         self.target_size = target_size
+        self.year = year
 
         
 
@@ -87,13 +89,13 @@ class COCOData(object):
         # if interpolation not in [ "nearest", "bilinear", "bicubic"]:
         #     raise ValueError("Supported methods are `nearest`, `bilinear`, and `bicubic`.")
         img = self.imgs[ind]
-        fpath = os.path.join('{}/{}2017'.format(self.data_dir, self.img_set), img['file_name']) 
+        fpath = os.path.join('{}/{}{}'.format(self.data_dir, self.img_set, self.year), img['file_name']) 
         img = load_img(fpath, grayscale=False, target_size=target_size)
         x = img_to_array(img, data_format="channels_last") # channels_last for tf, channels_first for theano
         x = preprocess_input(x)
         return x
 
-    def gt_bbox_at(self, ind):
+    def gt_bboxM_at(self, ind):
         """
         # return:
         bbox: bbox in the form of an numpy array
@@ -117,6 +119,21 @@ class COCOData(object):
         if neg_sample:
             bbox[:, :,:] = 1
         return bbox
+    def get_bbox_at(self, ind):
+        """
+        # return:
+        bbox: bbox in the form of [[x,y,w,h]]
+        """
+        imgId = self.imgIds[ind]
+        img = self.coco.loadImgs([imgId])[0]
+        annId = self.coco.getAnnIds(imgId)
+        anns = self.coco.loadAnns(annId)
+        bbox = []
+        for ann in anns:
+            if ann['category_id'] in self.catIds:
+                bbox.append(ann['bbox'])
+        return np.array(bbox)
+
         
         
     def _shuffle_roidb_inds(self):
@@ -152,22 +169,23 @@ class COCOData(object):
             batch_x[i] = x
             batch_y[i] = self.data_y[db_ind]
             if bbox:
-                batch_bbox[i] = self.gt_bbox_at(db_ind)
+                batch_bbox[i] = self.gt_bboxM_at(db_ind)
         if bbox:
             return batch_x, [batch_y, batch_bbox]
         else:
             return batch_x, batch_y
 
-    def get_data(self, start, end):
+    def get_data(self, start, end=math.inf):
         end = min(end, self.num_images)
         num_bag = end - start
-        data_y = self.data_y()[start: end]
-        data_x = np.zeros((num_bag, 3, 224, 224))
+        data_y = self.data_y[start: end]
+        data_bbox = np.zeros((num_bag, 4))
+        data_x = np.zeros((num_bag, )+self.target_size+(3,))
         for i in range(start, end):
-            im = self.image_at(i)
-            blob = im_to_blob(im)
-            data_x[i - start] = blob
-        return data_x, data_y
+            im = self.imgarr_at(i, self.target_size)
+            data_x[i - start] = im
+            data_bbox = self.get_bbox_at(i)
+        return data_x, [data_y, data_bbox]
 
     def generate(self, bbox=True):
         """
