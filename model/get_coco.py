@@ -81,6 +81,15 @@ class COCOData(object):
                 #     pass
         return bag_labels
 
+    def img_at(self, ind):
+        """
+        #return:
+        x: a numpy array of an image
+        """
+        img = self.imgs[ind]
+        fpath = os.path.join('{}/{}{}'.format(self.data_dir, self.img_set, self.year), img['file_name']) 
+        return fpath
+
     def imgarr_at(self, ind, target_size):
         """
         #return:
@@ -175,7 +184,7 @@ class COCOData(object):
         else:
             return batch_x, batch_y
 
-    def get_data(self, start, end=math.inf):
+    def get_data(self, start=0, end=math.inf):
         end = min(end, self.num_images)
         num_bag = end - start
         data_y = self.data_y[start: end]
