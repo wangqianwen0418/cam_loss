@@ -1,5 +1,6 @@
 import keras.backend as K
 import numpy as np
+from keras.layers import maximum
 
 lambda_center = 0.5
 lambda_area = 0.5
@@ -100,7 +101,12 @@ def area_loss(y_true, y_pred):
     v_in = K.sum(y_pred*y_true, axis=(1,2,3))
     v_out = K.sum(y_pred, axis=(1,2,3)) - v_in
     x = v_out/v_in
-    x_bool = K.cast(K.less_equal(x, 1.0), K.floatx())
-    loss = x_bool * (0.5 * x * x) + (1 - x_bool) * (x - 0.5)
-    # loss = K.log(v_out/v_in+1)
+    # option 1
+    # x_bool = K.cast(K.less_equal(x, 1.0), K.floatx())
+    # loss = x_bool * (0.5 * x * x) + (1 - x_bool) * (x - 0.5)
+    # # option 2
+    # loss = - K.log(v_in/(v_out+0.001) + 0.1)
+    # option 3
+    x_0 = K.cast(K.less_equal(x, 0), K.floatx())
+    loss = maximum([x - 1, x_0]) # no loss when x<1
     return loss
