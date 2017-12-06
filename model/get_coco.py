@@ -7,13 +7,15 @@ from keras.preprocessing.image import load_img, img_to_array
 from keras.applications.imagenet_utils import preprocess_input
 
 class COCOData(object):
-    def __init__(self, data_dir, COI=['cat'], img_set='train', year=2017, batch_size=32, target_size=(224, 224)):
+    def __init__(self, data_dir, COI=['cat'], img_set='train', year=2017, batch_size=32, target_size=(224, 224), percent=1):
         if img_set not in ['train', 'val', 'test']:
             raise ValueError('img_set should be neither `train`, `val` or `test` ') 
         annFile = os.path.join(data_dir, 'annotations/instances_{}{}.json'.format(img_set, year))
 
         self.data_dir = data_dir
         self.img_set = img_set
+        self.percent = percent
+
         self.coco = COCO(annFile)
         self.name = 'coco_'+img_set
         self.catNms = COI
@@ -31,6 +33,7 @@ class COCOData(object):
         self.perm = np.random.permutation(np.arange(self.num_images))
         self.target_size = target_size
         self.year = year
+        
 
         
 
@@ -39,12 +42,15 @@ class COCOData(object):
         negIds = self.coco.getCatIds(catNms=['chair', 'couch'])
         pos_1 = self.coco.getImgIds(catIds=self.catIds +[negIds[0]])
         pos_2 = self.coco.getImgIds(catIds=self.catIds + [negIds[1]])
+        pos_1 = pos_1[:int(self.percent*len(pos_1))]
+        pos_2 = pos_2[:int(self.percent*len(pos_2))]
         pos_samples = pos_1
         for sample in pos_2:
             if sample not in pos_samples:
                 pos_samples.append(sample)
 
         neg_1 = self.coco.getImgIds(catIds=[negIds[0]])
+        neg_1 = neg_1[:int(self.percent*len(neg_1))]
         neg_samples = []
         i = 0
         while i < int(0.8*len(pos_1)):
@@ -53,6 +59,7 @@ class COCOData(object):
                 i += 1
                 neg_samples.append(sample)
         neg_2 = self.coco.getImgIds(catIds=[negIds[1]])
+        neg_2 = neg_2[:int(self.percent*len(neg_2))]
         i = 0
         while i < int(0.8*len(pos_2)):
             sample = neg_2.pop()
