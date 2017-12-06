@@ -186,10 +186,12 @@ if __name__ == "__main__":
         monitor = "val_label_acc"
     else:
         monitor = "val_acc"
-    check_point = ModelCheckpoint("save_model/{}_{}_{}.h5".format(model_name, exp, per), monitor=monitor, verbose=0, save_best_only=True, save_weights_only=False)
-    tf_log = TensorBoard(log_dir='save_model/tf_logs_{}_{}_{}'.format(model_name, exp, per), batch_size=batch_size, write_graph=True)
-    csv_logger = CSVLogger('logs/{}_{}_{}.log'.format(model_name, exp, per))
-    callbacks = [check_point, tf_log, csv_logger]
+    def callbacks(i=0):
+        check_point = ModelCheckpoint("save_model/{}_{}_{}.h5".format(model_name, exp, per), monitor=monitor, verbose=0, save_best_only=True, save_weights_only=False)
+        tf_log = TensorBoard(log_dir='save_model/tf_logs_{}_{}_{}_stage{}'.format(model_name, exp, per,i), batch_size=batch_size, write_graph=True)
+        csv_logger = CSVLogger('logs/{}_{}_per{}_stage{}.log'.format(model_name, exp, per, i))
+        callbacks = [check_point, tf_log, csv_logger]
+        return callbacks
 
 
     if bbox:
@@ -212,7 +214,7 @@ if __name__ == "__main__":
                 steps_per_epoch=cocodata_train.num_images//batch_size,
                 validation_data = cocodata_val.generate(bbox),
                 validation_steps = cocodata_val.num_images//batch_size,
-                epochs=epochs, callbacks=callbacks)
+                epochs=epochs, callbacks=callbacks(0))
 
 
     for i in range(r_blk):
@@ -237,6 +239,6 @@ if __name__ == "__main__":
                 steps_per_epoch=cocodata_train.num_images//batch_size,
                 validation_data = cocodata_val.generate(bbox),
                 validation_steps = cocodata_val.num_images//batch_size,
-                epochs=epochs*2, callbacks=callbacks)
+                epochs=epochs*2, callbacks=callbacks(i))
 
 
