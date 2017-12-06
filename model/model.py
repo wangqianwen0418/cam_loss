@@ -7,7 +7,7 @@ from keras.models import Model
 from keras.layers import dot, Reshape
 from keras import optimizers 
 from keras.preprocessing.image  import ImageDataGenerator
-from keras.callbacks import TensorBoard, ModelCheckpoint
+from keras.callbacks import TensorBoard, ModelCheckpoint, CSVLogger
 from keras.optimizers import SGD
 
 from keras import activations, initializers, regularizers, constraints
@@ -120,11 +120,13 @@ def resize(input):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--exp", type=str, required=True)
+    parser.add_argument("--per", type=float, default = 1.)
     parser.add_argument("--bbox", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], required=True)
     args = parser.parse_args()
 
     exp = args.exp
     bbox = args.bbox
+    per = args.per
 
     batch_size = 16
     target_size = (224, 224)
@@ -163,17 +165,31 @@ if __name__ == "__main__":
         layer.trainable = False
 
     # get data
-    cocodata_train = COCOData(data_dir="../data/coco/", COI=['cat'], img_set="train", batch_size=batch_size, target_size=target_size)
-    cocodata_val = COCOData(data_dir="../data/coco/", COI=['cat'], img_set="val", batch_size=batch_size, target_size=target_size)
+    cocodata_train = COCOData(
+        data_dir="../data/coco/", 
+        COI=['cat'], 
+        img_set="train", 
+        batch_size=batch_size, 
+        target_size=target_size, 
+        year=2014,
+        percent=per
+        )
+    cocodata_val = COCOData(
+        data_dir="../data/coco/", 
+        COI=['cat'], img_set="val", 
+        batch_size=batch_size, 
+        target_size=target_size, 
+        year=2014)
 
     ## callbacks to save the best model
     if bbox:
         monitor = "val_label_acc"
     else:
         monitor = "val_acc"
-    check_point = ModelCheckpoint("save_model/{}_{}.h5".format(model_name, exp), monitor=monitor, verbose=0, save_best_only=True, save_weights_only=False)
-    tf_log = TensorBoard(log_dir='save_model/tf_logs_{}_{}'.format(model_name, exp), batch_size=batch_size, write_graph=True)
-    callbacks = [check_point, tf_log]
+    check_point = ModelCheckpoint("save_model/{}_{}_{}.h5".format(model_name, exp, per), monitor=monitor, verbose=0, save_best_only=True, save_weights_only=False)
+    tf_log = TensorBoard(log_dir='save_model/tf_logs_{}_{}_{}'.format(model_name, exp, per), batch_size=batch_size, write_graph=True)
+    csv_logger = CSVLogger('logs/{}_{}_{}.log'.format(model_name, exp, per))
+    callbacks = [check_point, tf_log, csv_logger]
 
 
     if bbox:
@@ -201,10 +217,7 @@ if __name__ == "__main__":
 
     for i in range(r_blk):
         i = i+1
-        if i==r_blk:
-            cbs = callbacks
-        else:
-            cbs = None
+        
         num_free_layers = sum(blk_layers[-i:])
         for layer in base_model.layers[:-num_free_layers]:
             layer.trainable = False
@@ -224,6 +237,6 @@ if __name__ == "__main__":
                 steps_per_epoch=cocodata_train.num_images//batch_size,
                 validation_data = cocodata_val.generate(bbox),
                 validation_steps = cocodata_val.num_images//batch_size,
-                epochs=epochs, callbacks=cbs)
+                epochs=epochs*2, callbacks=callbacks)
 
 
