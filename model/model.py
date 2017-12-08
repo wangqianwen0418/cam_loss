@@ -121,12 +121,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--exp", type=str, required=True)
     parser.add_argument("--per", type=float, default = 1.)
+    parser.add_argument("--year", default = 2017)
     parser.add_argument("--bbox", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], required=True)
     args = parser.parse_args()
 
     exp = args.exp
     bbox = args.bbox
     per = args.per
+    year = args.year
 
     batch_size = 16
     target_size = (224, 224)
@@ -171,7 +173,7 @@ if __name__ == "__main__":
         img_set="train", 
         batch_size=batch_size, 
         target_size=target_size, 
-        year=2014,
+        year=year,
         percent=per
         )
     cocodata_val = COCOData(
@@ -179,7 +181,7 @@ if __name__ == "__main__":
         COI=['cat'], img_set="val", 
         batch_size=batch_size, 
         target_size=target_size, 
-        year=2014)
+        year=year)
 
     ## callbacks to save the best model
     if bbox:
@@ -187,9 +189,9 @@ if __name__ == "__main__":
     else:
         monitor = "val_acc"
     def callbacks(i=0):
-        check_point = ModelCheckpoint("save_model/{}_{}_{}.h5".format(model_name, exp, per), monitor=monitor, verbose=0, save_best_only=True, save_weights_only=False)
-        tf_log = TensorBoard(log_dir='save_model/tf_logs_{}_{}_{}_stage{}'.format(model_name, exp, per,i), batch_size=batch_size, write_graph=True)
-        csv_logger = CSVLogger('logs/{}_{}_per{}_stage{}.log'.format(model_name, exp, per, i))
+        check_point = ModelCheckpoint("save_model/{}_{}_year{}_per{}.h5".format(model_name, exp, year, per), monitor=monitor, verbose=0, save_best_only=True, save_weights_only=False)
+        tf_log = TensorBoard(log_dir='save_model/tf_logs_{}_{}_year{}_per{}_stage{}'.format(model_name, exp, year, per,i), batch_size=batch_size, write_graph=True)
+        csv_logger = CSVLogger('logs/{}_{}_year{}_per{}_stage{}.log'.format(model_name, exp, year, per, i))
         callbacks = [check_point, tf_log, csv_logger]
         return callbacks
 

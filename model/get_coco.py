@@ -33,9 +33,7 @@ class COCOData(object):
         self.perm = np.random.permutation(np.arange(self.num_images))
         self.target_size = target_size
         self.year = year
-        
-
-        
+         
 
     def gt_img_ids(self):
         # hack for now, positive: cat&chiar or cat&couch, negative: only chair or couch
