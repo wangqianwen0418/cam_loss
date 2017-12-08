@@ -29,3 +29,5 @@ __pycache__/
 save_model/
 # for dataset
 data/
+cache/
+!cache/*.json

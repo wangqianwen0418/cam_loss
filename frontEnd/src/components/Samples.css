@@ -3,3 +3,11 @@
     height: calc(var(--ratio-samples) * (100vh - 70px));
     border-right: 1px solid #e9e9e9;
 }
+.threshold{
+    border-right: 1px solid #e9e9e9;
+}
+/* .slider {
+    float: 'left';
+    height: calc(var(--ratio-samples) * (100vh - 70px));
+    margin-left: 5px;
+  }; */
