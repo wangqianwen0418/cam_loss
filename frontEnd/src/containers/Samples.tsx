@@ -10,7 +10,7 @@ export function mapStateToProps() {
 
 export function mapDispatchToProps(dispatch: Dispatch<actions.AllActions>) {
     return {
-        // onImportModel: (json:any) => {dispatch(actions.importModel(json))}
+        onSelectIDs: (ids:number[]) => {dispatch(actions.selectIDs(ids))}
     }
 }
 

@@ -13,23 +13,28 @@ export interface States{
     th:number
 }
 
+export interface Props{
+    onSelectIDs:(ids:number[])=>void
+}
+
 const THRED = 0.15
-export default class Samples extends React.Component<{},States> {
+export default class Samples extends React.Component<Props,States> {
     constructor(props:any){
         super(props)
         this.state={
             th:THRED
         }
-        this.onChange = this.onChange.bind(this)
+        this.changeTH = this.changeTH.bind(this)
+        this.onSelectIDs = this.onSelectIDs.bind(this)
     }
-    onChange(value:number){
+    changeTH(value:number){
         console.info(value)
         this.setState({
             th: value
           });
     }
-    click(e:React.MouseEvent<any>):void{
-        console.info(e)
+    onSelectIDs(ids:number[]):void{
+        this.props.onSelectIDs(ids)
     }
 
     render() {
@@ -50,7 +55,7 @@ export default class Samples extends React.Component<{},States> {
                             return <circle key={i} cx={dot.pos[0]} cy={dot.pos[1]} 
                             r={dot.pred >= this.state.th ?5:3} 
                             fill={dot.pred >= this.state.th ? "#49a9ee" : "gray"}
-                            onClick={this.click}>
+                            onClick={()=>this.onSelectIDs([i])}>
                             </circle>
                         })}
                     </g>
@@ -58,7 +63,7 @@ export default class Samples extends React.Component<{},States> {
                 <Row className="threshold">
                     <Col span={2}><div style={{textAlign:"center"}}>Threshold</div></Col>
                     <Col span={8}>
-                        <Slider min={0} max={1} value={this.state.th} onChange={this.onChange} step={0.01} />
+                        <Slider min={0} max={1} value={this.state.th} onChange={this.changeTH} step={0.01} />
                     </Col>
                     <Col span={4}>
                         <InputNumber
@@ -67,7 +72,7 @@ export default class Samples extends React.Component<{},States> {
                             step={0.01}
                             style={{ marginLeft: 16 }}
                             value={this.state.th}
-                            onChange={this.onChange}
+                            onChange={this.changeTH}
                         />
                     </Col>
 

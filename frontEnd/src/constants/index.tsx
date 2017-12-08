@@ -8,6 +8,9 @@ export type DECREMENT_ENTHUSIASM = typeof DECREMENT_ENTHUSIASM;
 export const IMPORT_MODEL = "IMPORT_MODEL" 
 export type IMPORT_MODEL = typeof IMPORT_MODEL
 
+export const SELECT_IDS = "SELECT_IDS" 
+export type SELECT_IDS = typeof SELECT_IDS
+
 
 
 

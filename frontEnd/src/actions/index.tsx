@@ -36,5 +36,17 @@ export function importModel(json:Model):ImportModelAction{
     }
 }
 
+export interface SelectIDsAction {
+    type: constants.SELECT_IDS,
+    ids: number[]
+
+}
+export function selectIDs(ids:number[]):SelectIDsAction{
+    return {
+        type:constants.SELECT_IDS,
+        ids
+    }
+}
+
 // export type EnthusiasmAction = IncrementEnthusiasmAction | DecrementEnthusiasmAction
-export type AllActions = ImportModelAction
+export type AllActions = ImportModelAction|SelectIDsAction
