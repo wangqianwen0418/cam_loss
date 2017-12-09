@@ -21,7 +21,7 @@ cocodata_train = COCOData(data_dir="../data/coco/", COI=['cat'], img_set="train"
 x_train,[y_train, bbox_train] = cocodata_train.get_data()
 
 # ## with bbox model
-# model_path = "save_model/vgg19_exp1.h5"
+# model_path = "save_model/vgg19_cat_bbox_exp1_year2017_per1.0.h5"
 # model = load_model(model_path, custom_objects={'FC_layer': FC_layer})
 
 # preds = model.predict(x_train, batch_size=batch_size)
