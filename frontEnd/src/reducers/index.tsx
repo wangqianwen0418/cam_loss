@@ -12,10 +12,8 @@ export function reducer(state: StoreState, action: AllActions): StoreState {
     // case DECREMENT_ENTHUSIASM:
     //   return { ...state, enthusiasmLevel:state.enthusiasmLevel-1 };
     case IMPORT_MODEL:    
-      console.info("reducer import model", action.model)
       return { ...state, model:action.model}
     case SELECT_IDS:
-    console.info(action.ids)
       return {...state, ids:action.ids}
     default:
       return state;

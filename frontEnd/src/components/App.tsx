@@ -21,8 +21,8 @@ class App extends React.Component{
                 </Row>
                 <Row>
                     <Col span={18}>
-                        <Samples />
-                        <Annotation/>
+                        <Row><Samples /></Row>
+                        <Row><Annotation/></Row>
                     </Col>
                     <Col span={6}>
                         <Model/>
