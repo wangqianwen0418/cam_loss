@@ -1,6 +1,6 @@
 import * as React from "react";
 import "./Samples.css";
-import { Slider, InputNumber, Row, Col, Switch } from 'antd';
+import { Slider, Switch } from 'antd';
 // import "../cache/heatmaps_nobbox2017/pos.json";
 let dots = require("../cache/heatmaps_nobbox2017/pos.json");
 let truePreds = require("../cache/true_preds2017.json");
@@ -66,14 +66,14 @@ export default class Samples extends React.Component<Props, States> {
     }
     onSelect(e: any) {
         let { x, y, w, h } = this.state.selectBox
-        let sx:number = e.pageX - margin, sy:number = e.pageY - 70 - margin
+        let sx: number = e.pageX - margin, sy: number = e.pageY - 70 - margin
 
         this.setState({
             selectBox: {
                 x: sx - x >= 0 ? x : sx,
                 y: sy - y >= 0 ? y : sy,
                 w: Math.abs(sx - x),
-                h: Math.abs(sy  - y)
+                h: Math.abs(sy - y)
             }
         })
 
@@ -93,9 +93,9 @@ export default class Samples extends React.Component<Props, States> {
     }
     endSelect(e: React.MouseEvent<any>) {
         document.removeEventListener("mousemove", this.onSelect)
-        let {w, h} = this.state.selectBox
+        let { w, h } = this.state.selectBox
         // this.setState({selectBox:{x:0, y:0, w:0, h:0}})
-        if(this.selectedIDs.length>0 || (w>2&&h>2)){
+        if (this.selectedIDs.length > 0 || (w > 2 && h > 2)) {
             this.props.onSelectIDs(this.selectedIDs)
             this.selectedIDs = []
         }
@@ -131,7 +131,7 @@ export default class Samples extends React.Component<Props, States> {
                                         className="dot"
                                         key={i} cx={dot.pos[0]} cy={dot.pos[1]}
                                         r={aboveTH ? (selected ? 3 : 3) : 3}
-                                        fill={aboveTH ? "#49a9ee" : "gray"}
+                                        fill={aboveTH ? "#49a9ee" : "#ccc"}
                                     // onClick={() => this.onSelectIDs([i])}
                                     >
                                         <title>id:{i}</title>
@@ -140,8 +140,24 @@ export default class Samples extends React.Component<Props, States> {
                         </g>
                     </g>
                 </svg>
+                <div className="threshold">
+                    {/* <InputNumber
+                        min={0}
+                        max={1}
+                        step={0.01}
+                        style={{ marginLeft: 16 }}
+                        value={this.state.th}
+                        onChange={this.changeTH}
+                    /> */}
+                    <Slider
+                        vertical
+                        min={0} max={1}
+                        value={this.state.th}
+                        onChange={this.changeTH}
+                        step={0.01} />
+                </div>
 
-                <Row className="threshold">
+                {/* <Row className="threshold">
                     <Col span={2}><div style={{ textAlign: "center" }}>Threshold</div></Col>
                     <Col span={8}>
                         <Slider min={0} max={1} value={this.state.th} onChange={this.changeTH} step={0.01} />
@@ -156,7 +172,7 @@ export default class Samples extends React.Component<Props, States> {
                             onChange={this.changeTH}
                         />
                     </Col>
-                </Row>
+                </Row> */}
             </div>)
     }
 }

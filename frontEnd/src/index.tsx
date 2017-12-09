@@ -10,10 +10,16 @@ import './index.css';
 
 import 'antd/dist/antd.css';
 
-
-let initState:StoreState = {model:{node:[]}, ids:[1,2,3,4,5,6,7,1000,1333]}
+let initIDs:number[]=[]
+for(let i =0;i<100;i++){
+  initIDs.push(Math.round(Math.random()*2088))
+}
+let initState:StoreState = {
+  model:{node:[]}, 
+  ids:initIDs}
 const store = createStore<StoreState>(reducer, initState );
 
+console.info(Array(100).map((e:any,i:number)=>Math.round(Math.random()*2000)))
 ReactDOM.render(
   <Provider store={store}>
     <App />
