@@ -90,17 +90,15 @@ export default class Samples extends React.Component<Props, States> {
                     this.selectedIDs.push(i)
                 }
             })
-
-
-        console.info(e, newdots[350], newdots[1506])
-
     }
     endSelect(e: React.MouseEvent<any>) {
         document.removeEventListener("mousemove", this.onSelect)
+        let {w, h} = this.state.selectBox
         // this.setState({selectBox:{x:0, y:0, w:0, h:0}})
-        console.info(this.selectedIDs)
-        this.props.onSelectIDs(this.selectedIDs)
-        this.selectedIDs = []
+        if(this.selectedIDs.length>0 || (w>2&&h>2)){
+            this.props.onSelectIDs(this.selectedIDs)
+            this.selectedIDs = []
+        }
     }
     render() {
         let { allSamples } = this.state
