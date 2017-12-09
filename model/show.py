@@ -50,7 +50,7 @@ for id in range(preds.shape[0]):
     heatmap = cv2.applyColorMap(pred_map, cv2.COLORMAP_OCEAN)
     # pred_map = np.repeat(np.expand_dims(pred_map, axis=-1), repeats=3, axis=2)
     # heatmap = cv2.LUT(pred_map, lut)
-    result = cv2.addWeighted(img, 0.2, heatmap, 0.5, 9)
+    result = cv2.addWeighted(img, 0.3, heatmap, 0.4, 9)
     # cv2.imshow('image', result)
     # cv2.waitKey(500)
     cv2.imwrite('../data/cache/heatmaps_bbox2017/{}.jpg'.format(id), result)

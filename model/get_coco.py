@@ -129,7 +129,7 @@ class COCOData(object):
                 w *= scale[0]
                 y *= scale[1]
                 h *= scale[1]
-                bbox[int(x):int(x+w), int(y):int(y+h),:] = 1
+                bbox[int(y):int(y+h), int(x):int(x+w), :] = 1
         if neg_sample:
             bbox[:, :,:] = 1
         return bbox
