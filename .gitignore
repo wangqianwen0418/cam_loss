@@ -27,7 +27,7 @@ logs/
 __pycache__/
 *.pyc
 save_model/
+
 # for dataset
 data/
-cache/
-!cache/*.json
+**/public/cache/
