@@ -11,7 +11,7 @@ import './index.css';
 import 'antd/dist/antd.css';
 
 
-let initState:StoreState = {model:{node:[]}, ids:[]}
+let initState:StoreState = {model:{node:[]}, ids:[1,2,3,4,5,6,7,1000,1333]}
 const store = createStore<StoreState>(reducer, initState );
 
 ReactDOM.render(
