@@ -1,6 +1,9 @@
 export interface StoreState {
     model:Model;
-    ids:number[]
+    ids:number[];
+    bbox:boolean;
+    imgset:"val"|"train";
+    [key:string]:any;
 }
 
 export interface Model {

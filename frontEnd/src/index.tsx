@@ -10,13 +10,15 @@ import './index.css';
 
 import 'antd/dist/antd.css';
 
-let initIDs:number[]=[]
-for(let i =0;i<100;i++){
-  initIDs.push(Math.round(Math.random()*2088))
-}
+// let initIDs:number[]=[]
+// for(let i =0;i<100;i++){
+//   initIDs.push(Math.round(Math.random()*2088))
+// }
 let initState:StoreState = {
   model:{node:[]}, 
-  ids:initIDs}
+  bbox:false,
+  imgset:"train",
+  ids:[10]}
 const store = createStore<StoreState>(reducer, initState );
 
 console.info(Array(100).map((e:any,i:number)=>Math.round(Math.random()*2000)))

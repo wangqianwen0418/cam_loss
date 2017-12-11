@@ -1,10 +1,12 @@
 import Samples from '../components/Samples';
 import * as actions from '../actions/';
-// import { StoreState } from '../types/index';
+import { StoreState } from '../types/index';
 import { connect, Dispatch } from 'react-redux';
 
-export function mapStateToProps() {
+export function mapStateToProps(state:StoreState) {
     return {
+        bbox:state.bbox,
+        imgset: state.imgset
     };
 }
 

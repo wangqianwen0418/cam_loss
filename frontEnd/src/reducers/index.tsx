@@ -2,7 +2,7 @@
 
 import { AllActions } from '../actions';
 import { StoreState } from '../types/index';
-import { IMPORT_MODEL, SELECT_IDS } from '../constants/index';
+import { IMPORT_MODEL, SELECT_IDS, CHANGE_BBOX, CHANGE_IMGSET } from '../constants';
 
 export function reducer(state: StoreState, action: AllActions): StoreState {
   switch (action.type) {
@@ -15,6 +15,14 @@ export function reducer(state: StoreState, action: AllActions): StoreState {
       return { ...state, model:action.model}
     case SELECT_IDS:
       return {...state, ids:action.ids}
+    case CHANGE_BBOX:
+
+    console.info("reducers", action.bbox)
+      return {...state, bbox:action.bbox}
+    case CHANGE_IMGSET:
+    
+    console.info("reducers", action.imgset)
+      return {...state, imgset:action.imgset}
     default:
       return state;
   }

@@ -4,6 +4,7 @@ import "./App.css";
 import Samples from "../containers/Samples";
 import Annotation from "../containers/Annotation";
 import Model from "../containers/Model";
+import ControlPanel from "../containers/ControlPanel";
 
 import { Row, Col} from 'antd';
 
@@ -21,6 +22,7 @@ class App extends React.Component{
                 </Row>
                 <Row>
                     <Col span={18}>
+                        <Row><ControlPanel/></Row>
                         <Row><Samples /></Row>
                         <Row><Annotation/></Row>
                     </Col>

@@ -11,6 +11,12 @@ export type IMPORT_MODEL = typeof IMPORT_MODEL
 export const SELECT_IDS = "SELECT_IDS" 
 export type SELECT_IDS = typeof SELECT_IDS
 
+export const CHANGE_BBOX = "CHANGE_BBOX" 
+export type CHANGE_BBOX = typeof CHANGE_BBOX
+
+export const CHANGE_IMGSET = "CHANGE_IMGSET"
+export type CHANGE_IMGSET = typeof CHANGE_IMGSET
+
 
 
 

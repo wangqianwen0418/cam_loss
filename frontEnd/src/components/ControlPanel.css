@@ -1,0 +1,11 @@
+.controlPanel{
+    padding: 10px 20px;
+    /* font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; */
+    box-shadow: 0px 4px 4px 0 rgba(0,0,0,0.16);
+    border: 1px solid var(--border-color);
+    height: 50px;
+}
+.setting{
+    margin: 5px;
+    /* padding: 5px; */
+}

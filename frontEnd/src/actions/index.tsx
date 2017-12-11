@@ -48,5 +48,29 @@ export function selectIDs(ids:number[]):SelectIDsAction{
     }
 }
 
+export interface ChangeBBoxAction {
+    type: constants.CHANGE_BBOX,
+    bbox: boolean 
+
+}
+export function changeBBox(f:boolean):ChangeBBoxAction{
+    return {
+        type:constants.CHANGE_BBOX,
+        bbox:f
+    }
+}
+
+export interface ChangeImgSetAction {
+    type: constants.CHANGE_IMGSET,
+    imgset: "train"|"val" 
+
+}
+export function changeImgSet(imgset:"train"|"val"):ChangeImgSetAction{
+    return {
+        type:constants.CHANGE_IMGSET,
+        imgset
+    }
+}
+
 // export type EnthusiasmAction = IncrementEnthusiasmAction | DecrementEnthusiasmAction
-export type AllActions = ImportModelAction|SelectIDsAction
+export type AllActions = ImportModelAction|SelectIDsAction|ChangeBBoxAction|ChangeImgSetAction
