@@ -18,10 +18,9 @@ let initState:StoreState = {
   model:{node:[]}, 
   bbox:false,
   imgset:"train",
-  ids:[10]}
+  ids:[40]}
 const store = createStore<StoreState>(reducer, initState );
 
-console.info(Array(100).map((e:any,i:number)=>Math.round(Math.random()*2000)))
 ReactDOM.render(
   <Provider store={store}>
     <App />

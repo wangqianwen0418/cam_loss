@@ -1,32 +1,37 @@
 import * as React from "react";
 import "./Annotation.css";
-import { Switch } from 'antd';
+import { Switch, Modal } from 'antd';
 
 
 
 export interface Props {
     ids: number[]
-    bbox:boolean
-    imgset:"train"|"val"
+    bbox: boolean
+    imgset: "train" | "val"
 }
 export interface State {
     // bbox:boolean;
-    heatmap:boolean;
+    heatmap: boolean;
+    visible: boolean;
 }
-const margin = 10, col = 4, row = 5;
+const margin = 5, col = 4, row = 5;
 export default class Annotation extends React.Component<Props, State>{
-    constructor(props:Props){
+    public selectedID: number = 0;
+    constructor(props: Props) {
         super(props)
         this.state = {
             // bbox:false, 
-            heatmap: true
+            heatmap: true,
+            visible: false
         }
     }
     render() {
-        let {heatmap} = this.state
-        let {bbox, imgset} = this.props
-        let dots = require(`../cache/heatmaps_${bbox?"bbox":"nobbox"}2017_${imgset}/pos.json`);
+        let { heatmap } = this.state
+        let { bbox, imgset } = this.props
+        let dots = require(`../cache/heatmaps_${bbox ? "bbox" : "nobbox"}2017_${imgset}/pos.json`);
         let truePreds = require(`../cache/true_preds2017_${imgset}.json`);
+
+        let src: string = heatmap ? (bbox ? `heatmaps_bbox2017_${imgset}` : `heatmaps_nobbox2017_${imgset}`) : `2017_${imgset}`
         return (
             <div className="annotation">
                 <Switch
@@ -43,16 +48,32 @@ export default class Annotation extends React.Component<Props, State>{
                     onChange={() => { this.setState({ bbox: !bbox }) }}
                 /> */}
                 {this.props.ids.map((id: number) => {
-                    let src:string = heatmap?(bbox?`heatmaps_bbox2017_${imgset}`:`heatmaps_nobbox2017_${imgset}`):`2017_${imgset}`
+
                     return <img key={id}
-                        style={{ paddingRight: margin }}
-                        width={(window.innerWidth - 10) * 0.75 / row -3}
+                        style={{ paddingLeft: margin }}
+                        width={(window.innerWidth - 10) * 0.75 / row}
                         height={(window.innerHeight - 70) * 0.6 / col - margin * 2}
                         src={`./cache/${src}/${id}.jpg`}
                         title={`id:${id}, pred:${dots[id].pred.toFixed(4)}, truth:${truePreds[id]}`}
+                        onClick={() => { this.setState({ visible: true }); this.selectedID = id }}
                     >
                     </img>
                 })}
+
+                <Modal
+                    title={`ID:${this.selectedID}`}
+                    visible={this.state.visible}
+                    onCancel={() => { this.setState({ visible: false }) }}
+                    width={window.innerWidth*0.6}
+                    footer={[
+                        <span>
+                            {`id:${this.selectedID}, 
+                        pred:${dots[this.selectedID].pred.toFixed(4)}, 
+                        truth:${truePreds[this.selectedID]}`}
+                        </span>
+                    ]}
+                > <img width={window.innerWidth*0.6 - 2*16} src={`./cache/${src}/${this.selectedID}.jpg`}></img>
+                </Modal>
             </div>)
     }
 }

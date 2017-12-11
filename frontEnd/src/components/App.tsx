@@ -17,7 +17,7 @@ class App extends React.Component{
             <div className="app">
                 <Row>
                   <Col span={24}>
-                  <div className="header">Give me a name, pls</div>
+                  <div className="header">Look  Here</div>
                   </Col>
                 </Row>
                 <Row>
