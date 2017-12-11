@@ -3,15 +3,17 @@ import numpy as np
 import cv2
 import json
 from sklearn.manifold import TSNE
+img_set = "val"
+bbox = "nobbox"
 data = COCOData(data_dir="../data/coco/", 
                     COI=['cat'], 
-                    img_set="train", 
+                    img_set=img_set, 
                     year=2017)
 
-allmaps = np.load("../data/cache/allmaps_bbox2017.npy")
-preds = np.load("../data/cache/preds_bbox2017.npy")
-pred_maps = np.load("../data/cache/predmaps_bbox2017.npy")
-true_preds = np.load("../data/cache/true_preds_2017.npy")
+allmaps = np.load("../data/cache/allmaps_{}2017_{}.npy".format(bbox, img_set))
+preds = np.load("../data/cache/preds_{}2017_{}.npy".format(bbox, img_set))
+pred_maps = np.load("../data/cache/predmaps_{}2017_{}.npy".format(bbox, img_set))
+true_preds = np.load("../data/cache/true_preds_2017_{}.npy".format(img_set))
 # ids = []
 # for i in range(preds.shape[0]):
 #     if(abs(preds[i][0]-true_preds[i][0])>0.15 ):
@@ -53,12 +55,12 @@ for id in range(preds.shape[0]):
     result = cv2.addWeighted(img, 0.3, heatmap, 0.4, 9)
     # cv2.imshow('image', result)
     # cv2.waitKey(500)
-    cv2.imwrite('../data/cache/heatmaps_bbox2017/{}.jpg'.format(id), result)
+    cv2.imwrite('../frontEnd/public/cache/heatmaps_{}2017_{}/{}.jpg'.format(bbox, img_set, id), result)
 
     tsne.append({"pos":pos[id].tolist() , "pred":preds[id].tolist()[0]})
 
 
-with open("../frontEnd/src/cache/heatmaps_bbox2017/pos.json", "w") as jsonf:
+with open("../frontEnd/src/cache/heatmaps_{}2017_{}/pos.json".format(bbox, img_set), "w") as jsonf:
     json.dump(tsne, jsonf)
 jsonf.close()
 
