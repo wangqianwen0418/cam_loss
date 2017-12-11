@@ -23,10 +23,12 @@ export interface Props {
 }
 
 const THRED = 0.15
-let width = window.innerWidth * 0.75 - 100
-let height = (window.innerHeight - 70) * 0.4
 let margin = 20
 const topPadding = 120
+let width = window.innerWidth * 0.75 - 100
+let height = (window.innerHeight - topPadding) * 0.4
+
+
 
 
 
@@ -144,7 +146,7 @@ export default class Samples extends React.Component<Props, States> {
                     onChange={() => { this.setState({ allSamples: !allSamples }) }}
                 />
 
-                <svg className="samples" width={width - margin} height={height}
+                <svg className="samples" width={width} height={height}
                     onMouseDown={this.startSelect}
                     onMouseUp={this.endSelect}
                     // onMouseOut={this.endSelect}

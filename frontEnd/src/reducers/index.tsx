@@ -16,13 +16,9 @@ export function reducer(state: StoreState, action: AllActions): StoreState {
     case SELECT_IDS:
       return {...state, ids:action.ids}
     case CHANGE_BBOX:
-
-    console.info("reducers", action.bbox)
       return {...state, bbox:action.bbox}
     case CHANGE_IMGSET:
-    
-    console.info("reducers", action.imgset)
-      return {...state, imgset:action.imgset}
+      return {...state, ids:[], imgset:action.imgset}
     default:
       return state;
   }
