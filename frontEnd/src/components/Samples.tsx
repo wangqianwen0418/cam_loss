@@ -95,7 +95,7 @@ export default class Samples extends React.Component<Props, States> {
         document.removeEventListener("mousemove", this.onSelect)
         let { x, y, w, h } = this.state.selectBox 
 
-        this.newdots.filter((dot: Dot) => { return this.state.allSamples || dot.pred >= this.state.th })
+        this.newdots.filter((dot: Dot) => { return this.state.allSamples || dot.conf >= this.state.th })
         .forEach((dot: Dot, i: number) => {
             let px: number = dot.pos[0], py: number = dot.pos[1]
             if (
@@ -154,10 +154,10 @@ export default class Samples extends React.Component<Props, States> {
 
                         <g className="samples" >
 
-                            {this.newdots.filter((dot: Dot) => { return (allSamples || (dot.pred >= this.state.th)) })
+                            {this.newdots.filter((dot: Dot) => { return (allSamples || (dot.conf >= this.state.th)) })
                                 .map((dot: Dot) => {
 
-                                    let aboveTH: boolean = (dot.pred >= this.state.th)
+                                    let aboveTH: boolean = (dot.conf >= this.state.th)
                                     let selected: boolean = this.selectedIDs.indexOf(dot.id) != -1
                                     return <circle
                                         className="dot"
