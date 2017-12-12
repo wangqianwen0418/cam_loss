@@ -14,6 +14,7 @@ export function mapStateToProps(state: StoreState) {
 export function mapDispatchToProps(dispatch: Dispatch<actions.AllActions>) {
     return {
         // onImportModel: (json:any) => {dispatch(actions.importModel(json))}
+        onChangeBBox: (bbox:boolean) => {dispatch(actions.changeBBox(bbox))}
     }
 }
 

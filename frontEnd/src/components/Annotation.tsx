@@ -7,10 +7,11 @@ import { Switch, Modal } from 'antd';
 export interface Props {
     ids: number[]
     bbox: boolean
-    imgset: "train" | "val"
+    imgset: "train" | "val",
+    onChangeBBox: (bbox:boolean)=>void
 }
 export interface State {
-    // bbox:boolean;
+    bbox:boolean;
     heatmap: boolean;
     visible: boolean;
 }
@@ -20,14 +21,14 @@ export default class Annotation extends React.Component<Props, State>{
     constructor(props: Props) {
         super(props)
         this.state = {
-            // bbox:false, 
+            bbox:this.props.bbox, 
             heatmap: true,
             visible: false
         }
     }
     render() {
-        let { heatmap } = this.state
-        let { bbox, imgset } = this.props
+        let { bbox, heatmap } = this.state
+        let { imgset } = this.props
         let dots = require(`../cache/heatmaps_${bbox ? "bbox" : "nobbox"}2017_${imgset}/pos.json`);
         let truePreds = require(`../cache/true_preds2017_${imgset}.json`);
 
@@ -64,15 +65,26 @@ export default class Annotation extends React.Component<Props, State>{
                     title={`ID:${this.selectedID}`}
                     visible={this.state.visible}
                     onCancel={() => { this.setState({ visible: false }) }}
-                    width={window.innerWidth*0.6}
+                    width={window.innerWidth * 0.6}
                     footer={[
+                        <Switch
+                            checkedChildren="heatmap"
+                            unCheckedChildren="origin"
+                            defaultChecked
+                            onChange={() => { this.setState({ heatmap: !heatmap }) }}
+                        />, 
+                        <Switch
+                            checkedChildren="bbox"
+                            unCheckedChildren="nobbox"
+                            onChange={() => {  this.setState({bbox:!bbox}) ;this.props.onChangeBBox(!bbox) }}
+                        />,
                         <span>
                             {`id:${this.selectedID}, 
                         pred:${dots[this.selectedID].pred.toFixed(4)}, 
                         truth:${truePreds[this.selectedID]}`}
                         </span>
                     ]}
-                > <img width={window.innerWidth*0.6 - 2*16} src={`./cache/${src}/${this.selectedID}.jpg`}></img>
+                > <img width={window.innerWidth * 0.6 - 2 * 16} src={`./cache/${src}/${this.selectedID}.jpg`}></img>
                 </Modal>
             </div>)
     }
