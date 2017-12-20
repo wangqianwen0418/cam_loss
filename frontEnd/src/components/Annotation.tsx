@@ -27,12 +27,13 @@ export default class Annotation extends React.Component<Props, State>{
         }
     }
     render() {
-        let { bbox, heatmap } = this.state
-        let { imgset } = this.props
+        let { heatmap } = this.state
+        let { bbox, imgset } = this.props
         let dots = require(`../cache/heatmaps_${bbox ? "bbox" : "nobbox"}2017_${imgset}/pos.json`);
         let truePreds = require(`../cache/true_preds2017_${imgset}.json`);
 
         let src: string = heatmap ? (bbox ? `heatmaps_bbox2017_${imgset}` : `heatmaps_nobbox2017_${imgset}`) : `2017_${imgset}`
+        let modalSrc: string = heatmap ? (this.state.bbox ? `heatmaps_bbox2017_${imgset}` : `heatmaps_nobbox2017_${imgset}`) : `2017_${imgset}`
         return (
             <div className="annotation">
                 <Switch
@@ -76,7 +77,7 @@ export default class Annotation extends React.Component<Props, State>{
                         <Switch
                             checkedChildren="bbox"
                             unCheckedChildren="nobbox"
-                            onChange={() => {  this.setState({bbox:!bbox}) ;this.props.onChangeBBox(!bbox) }}
+                            onChange={() => {  this.setState({bbox:!this.state.bbox})}}
                         />,
                         <span>
                             {`id:${this.selectedID}, 
@@ -84,7 +85,7 @@ export default class Annotation extends React.Component<Props, State>{
                         truth:${truePreds[this.selectedID]}`}
                         </span>
                     ]}
-                > <img width={window.innerWidth * 0.4 - 2 * 16} src={`./cache/${src}/${this.selectedID}.jpg`}></img>
+                > <img width={window.innerWidth * 0.4 - 2 * 16} src={`./cache/${modalSrc}/${this.selectedID}.jpg`}></img>
                 </Modal>
             </div>)
     }
