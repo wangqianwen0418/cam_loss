@@ -1,0 +1,338 @@
+nohup: ignoring input
+
+> vis_edit@0.1.0 start /home/qianww/cam_bbox/frontEnd
+> react-scripts-ts start
+
+Starting the development server...
+
+Warning: The 'no-use-before-declare' rule requires type information.
+ts-loader: Using typescript@2.5.3 and /home/qianww/cam_bbox/frontEnd/tsconfig.json
+Compiled with warnings.
+
+./src/index.tsx
+[20, 10]: " should be '
+[21, 12]: Missing semicolon
+[17, 15]: missing whitespace
+[18, 9]: missing whitespace
+[18, 15]: missing whitespace
+[19, 8]: missing whitespace
+[20, 10]: missing whitespace
+[21, 7]: missing whitespace
+
+./src/components/App.tsx
+[11, 1]: Consecutive blank lines are forbidden
+[13, 34]: missing whitespace
+[3, 8]: " should be '
+[4, 21]: " should be '
+[5, 24]: " should be '
+[6, 19]: " should be '
+[7, 26]: " should be '
+[9, 18]: missing whitespace
+
+./src/reducers/index.tsx
+[15, 45]: Missing semicolon
+[17, 40]: Missing semicolon
+[19, 42]: Missing semicolon
+[21, 54]: Missing semicolon
+[15, 32]: missing whitespace
+[17, 29]: missing whitespace
+[19, 30]: missing whitespace
+[21, 29]: missing whitespace
+[21, 40]: missing whitespace
+
+./src/containers/Samples.tsx
+[16, 6]: Missing semicolon
+[15, 73]: Missing semicolon
+[6, 39]: missing whitespace
+[8, 14]: missing whitespace
+[15, 27]: missing whitespace
+
+./src/containers/Model.tsx
+[14, 6]: Missing semicolon
+
+./src/containers/Annotation.tsx
+[18, 6]: Missing semicolon
+[17, 76]: Missing semicolon
+[8, 13]: missing whitespace
+[17, 29]: missing whitespace
+
+./src/containers/ControlPanel.tsx
+[14, 33]: " should be '
+[14, 41]: " should be '
+[17, 6]: Missing semicolon
+[14, 90]: Missing semicolon
+[15, 70]: Missing semicolon
+[14, 33]: missing whitespace
+[15, 26]: missing whitespace
+
+./src/components/Samples.tsx
+[149, 22]: JSX attributes must be on a line below the opening tag
+[149, 42]: JSX attributes must be on their own line and vertically aligned
+[149, 56]: JSX attributes must be on their own line and vertically aligned
+[150, 21]: JSX attributes must be on their own line and vertically aligned
+[151, 21]: JSX attributes must be on their own line and vertically aligned
+[166, 54]: JSX attributes must be on their own line and vertically aligned
+[166, 70]: JSX attributes must be on their own line and vertically aligned
+[188, 33]: JSX attributes must be on their own line and vertically aligned
+[191, 37]: Tag closing must be on its own line and aligned with opening of tag
+[145, 21]: Value must be set for boolean attributes
+[187, 25]: Value must be set for boolean attributes
+[155, 25]: JSX elements with no children must be self-closing
+[10, 20]: Type declaration of 'any' loses type-safety. Consider replacing it with a more precise type, the empty type ('{}'), or suppress this occurrence.
+[37, 24]: Type declaration of 'any' loses type-safety. Consider replacing it with a more precise type, the empty type ('{}'), or suppress this occurrence.
+[78, 37]: Type declaration of 'any' loses type-safety. Consider replacing it with a more precise type, the empty type ('{}'), or suppress this occurrence.
+[82, 17]: Type declaration of 'any' loses type-safety. Consider replacing it with a more precise type, the empty type ('{}'), or suppress this occurrence.
+[96, 35]: Type declaration of 'any' loses type-safety. Consider replacing it with a more precise type, the empty type ('{}'), or suppress this occurrence.
+[67, 9]: Calls to 'console.info' are not allowed.
+[31, 1]: Consecutive blank lines are forbidden
+[64, 1]: Consecutive blank lines are forbidden
+[119, 47]: missing whitespace
+[121, 61]: missing whitespace
+[1, 24]: " should be '
+[2, 8]: " should be '
+[21, 12]: " should be '
+[21, 20]: " should be '
+[52, 28]: " should be '
+[53, 33]: " should be '
+[79, 35]: " should be '
+[97, 38]: " should be '
+[123, 58]: " should be '
+[123, 65]: " should be '
+[155, 41]: ' should be "
+[168, 57]: " should be '
+[168, 69]: " should be '
+[10, 23]: Missing semicolon
+[16, 62]: Missing semicolon
+[20, 17]: Properties should be separated by semicolons
+[21, 25]: Properties should be separated by semicolons
+[22, 41]: Missing semicolon
+[25, 19]: Missing semicolon
+[26, 16]: Missing semicolon
+[27, 23]: Missing semicolon
+[28, 43]: Missing semicolon
+[29, 53]: Missing semicolon
+[36, 47]: Missing semicolon
+[38, 21]: Missing semicolon
+[44, 10]: Missing semicolon
+[45, 30]: Missing semicolon
+[46, 49]: Missing semicolon
+[48, 55]: Missing semicolon
+[49, 49]: Missing semicolon
+[50, 51]: Missing semicolon
+[62, 11]: Missing semicolon
+[61, 14]: Missing semicolon
+[67, 28]: Missing semicolon
+[79, 62]: Missing semicolon
+[80, 108]: Missing semicolon
+[83, 44]: Missing semicolon
+[84, 86]: Missing semicolon
+[93, 11]: Missing semicolon
+[97, 65]: Missing semicolon
+[98, 50]: Missing semicolon
+[112, 11]: Missing semicolon
+[100, 102]: Missing semicolon
+[102, 65]: Missing semicolon
+[110, 46]: Missing semicolon
+[115, 53]: Missing semicolon
+[116, 34]: Missing semicolon
+[120, 39]: Missing semicolon
+[132, 15]: Missing semicolon
+[131, 18]: Missing semicolon
+[137, 40]: Missing semicolon
+[138, 50]: Missing semicolon
+[210, 20]: Missing semicolon
+[146, 81]: Missing semicolon
+[159, 116]: Missing semicolon
+[162, 87]: Missing semicolon
+[163, 99]: Missing semicolon
+[172, 46]: Missing semicolon
+[108, 50]: == should be ===
+[121, 18]: != should be !==
+[121, 43]: != should be !==
+[163, 94]: != should be !==
+[121, 37]: missing whitespace
+[121, 39]: missing whitespace
+[121, 18]: missing whitespace
+[121, 20]: missing whitespace
+[121, 43]: missing whitespace
+[121, 45]: missing whitespace
+[123, 57]: missing whitespace
+[123, 58]: missing whitespace
+[123, 64]: missing whitespace
+[9, 10]: missing whitespace
+[20, 10]: missing whitespace
+[21, 12]: missing whitespace
+[36, 34]: missing whitespace
+[36, 42]: missing whitespace
+[58, 20]: missing whitespace
+[59, 22]: missing whitespace
+[119, 41]: missing whitespace
+[121, 11]: missing whitespace
+[123, 65]: missing whitespace
+[129, 24]: missing whitespace
+
+./src/components/Model.tsx
+[4, 51]: missing whitespace
+[5, 13]: missing whitespace
+[1, 24]: " should be '
+[2, 8]: " should be '
+[9, 16]: Missing semicolon
+
+./src/components/Annotation.tsx
+[53, 33]: JSX attributes must be on a line below the opening tag
+[54, 25]: JSX attributes must be on their own line and vertically aligned
+[55, 25]: JSX attributes must be on their own line and vertically aligned
+[56, 25]: JSX attributes must be on their own line and vertically aligned
+[57, 25]: JSX attributes must be on their own line and vertically aligned
+[58, 25]: JSX attributes must be on their own line and vertically aligned
+[59, 25]: JSX attributes must be on their own line and vertically aligned
+[42, 21]: Value must be set for boolean attributes
+[73, 29]: Value must be set for boolean attributes
+[70, 25]: Missing "key" prop for element.
+[76, 25]: Missing "key" prop for element.
+[81, 25]: Missing "key" prop for element.
+[53, 28]: JSX elements with no children must be self-closing
+[87, 19]: JSX elements with no children must be self-closing
+[35, 1]: Exceeds maximum line length of 120
+[5, 1]: Consecutive blank lines are forbidden
+[19, 70]: missing whitespace
+[1, 24]: " should be '
+[2, 8]: " should be '
+[10, 13]: " should be '
+[10, 23]: " should be '
+[32, 56]: " should be '
+[32, 65]: " should be '
+[8, 18]: Missing semicolon
+[9, 18]: Missing semicolon
+[10, 28]: Properties should be separated by semicolons
+[11, 39]: Missing semicolon
+[22, 21]: Missing semicolon
+[27, 10]: Missing semicolon
+[30, 43]: Missing semicolon
+[31, 36]: Missing semicolon
+[35, 128]: Missing semicolon
+[89, 20]: Missing semicolon
+[43, 75]: Missing semicolon
+[61, 27]: Missing semicolon
+[59, 96]: Missing semicolon
+[67, 72]: Missing semicolon
+[74, 83]: Missing semicolon
+[79, 107]: Missing semicolon
+[11, 33]: missing whitespace
+[11, 35]: missing whitespace
+[11, 25]: missing whitespace
+[14, 10]: missing whitespace
+[24, 18]: missing whitespace
+[79, 68]: missing whitespace
+[79, 77]: missing whitespace
+
+./src/components/ControlPanel.tsx
+[23, 17]: Tag closing must be on its own line and aligned with opening of tag
+[29, 17]: Tag closing must be on its own line and aligned with opening of tag
+[21, 21]: Value must be set for boolean attributes
+[15, 16]: Multiline JSX elements must be wrapped in parentheses
+[4, 23]: missing whitespace
+[9, 69]: missing whitespace
+[10, 29]: missing whitespace
+[14, 13]: missing whitespace
+[1, 24]: " should be '
+[3, 8]: " should be '
+[5, 29]: " should be '
+[5, 37]: " should be '
+[16, 71]: " should be '
+[22, 76]: " should be '
+[22, 84]: " should be '
+[5, 49]: Missing semicolon
+[6, 37]: Missing semicolon
+[11, 21]: Missing semicolon
+[30, 19]: Missing semicolon
+[22, 90]: Missing semicolon
+[28, 74]: Missing semicolon
+[5, 43]: missing whitespace
+[5, 45]: missing whitespace
+[6, 30]: missing whitespace
+[22, 75]: missing whitespace
+[22, 76]: missing whitespace
+[22, 83]: missing whitespace
+[5, 29]: missing whitespace
+[6, 22]: missing whitespace
+[10, 23]: missing whitespace
+[16, 71]: missing whitespace
+[22, 34]: missing whitespace
+[22, 84]: missing whitespace
+[28, 34]: missing whitespace
+
+./src/actions/index.tsx
+[12, 1]: Consecutive blank lines are forbidden
+[25, 1]: Consecutive blank lines are forbidden
+[32, 58]: missing whitespace
+[44, 56]: missing whitespace
+[56, 55]: missing whitespace
+[68, 70]: missing whitespace
+[2, 21]: " should be '
+[65, 13]: " should be '
+[65, 21]: " should be '
+[68, 37]: " should be '
+[68, 45]: " should be '
+[1, 42]: Missing semicolon
+[2, 31]: Missing semicolon
+[28, 33]: Properties should be separated by semicolons
+[29, 16]: Missing semicolon
+[36, 6]: Missing semicolon
+[40, 31]: Properties should be separated by semicolons
+[41, 18]: Missing semicolon
+[48, 6]: Missing semicolon
+[52, 32]: Properties should be separated by semicolons
+[53, 18]: Missing semicolon
+[60, 6]: Missing semicolon
+[64, 34]: Properties should be separated by semicolons
+[65, 26]: Missing semicolon
+[72, 6]: Missing semicolon
+[76, 95]: Missing semicolon
+[2, 14]: missing whitespace
+[2, 9]: missing whitespace
+[29, 11]: missing whitespace
+[32, 34]: missing whitespace
+[32, 41]: missing whitespace
+[34, 14]: missing whitespace
+[35, 15]: missing whitespace
+[44, 31]: missing whitespace
+[44, 41]: missing whitespace
+[46, 14]: missing whitespace
+[56, 30]: missing whitespace
+[56, 39]: missing whitespace
+[58, 14]: missing whitespace
+[59, 14]: missing whitespace
+[68, 37]: missing whitespace
+[68, 52]: missing whitespace
+[70, 14]: missing whitespace
+
+./src/constants/index.tsx
+[4, 1]: Consecutive blank lines are forbidden
+[20, 1]: Consecutive blank lines are forbidden
+[8, 29]: " should be '
+[11, 27]: " should be '
+[14, 28]: " should be '
+[17, 30]: " should be '
+[25, 23]: " should be '
+[26, 24]: " should be '
+[26, 35]: " should be '
+[26, 46]: " should be '
+[26, 57]: " should be '
+[8, 43]: Missing semicolon
+[9, 47]: Missing semicolon
+[11, 39]: Missing semicolon
+[12, 43]: Missing semicolon
+[14, 41]: Missing semicolon
+[15, 45]: Missing semicolon
+[17, 45]: Missing semicolon
+[18, 49]: Missing semicolon
+[26, 67]: Missing semicolon
+[25, 22]: missing whitespace
+[26, 22]: missing whitespace
+[25, 23]: missing whitespace
+[26, 23]: missing whitespace
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+

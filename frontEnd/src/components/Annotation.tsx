@@ -65,7 +65,7 @@ export default class Annotation extends React.Component<Props, State>{
                     title={`ID:${this.selectedID}`}
                     visible={this.state.visible}
                     onCancel={() => { this.setState({ visible: false }) }}
-                    width={window.innerWidth * 0.6}
+                    width={window.innerWidth * 0.4}
                     footer={[
                         <Switch
                             checkedChildren="heatmap"
@@ -84,7 +84,7 @@ export default class Annotation extends React.Component<Props, State>{
                         truth:${truePreds[this.selectedID]}`}
                         </span>
                     ]}
-                > <img width={window.innerWidth * 0.6 - 2 * 16} src={`./cache/${src}/${this.selectedID}.jpg`}></img>
+                > <img width={window.innerWidth * 0.4 - 2 * 16} src={`./cache/${src}/${this.selectedID}.jpg`}></img>
                 </Modal>
             </div>)
     }

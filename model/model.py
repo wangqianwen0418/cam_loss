@@ -114,6 +114,23 @@ def resize(input):
         "channels_last"
     )
     # print("map shape", K.int_shape(map))
+    # normalize heatmap
+    # min = K.expand_dims(K.expand_dims(K.min(map, axis=(1,2))))
+    # min = K.repeat_elements(min, rep=h0, axis=1)
+    # min = K.repeat_elements(min, rep=w0, axis= 2)
+    # max = K.expand_dims(K.expand_dims(K.max(map, axis=(1,2))))
+    # max = K.repeat_elements(max, rep=h0, axis=1)
+    # max = K.repeat_elements(max, rep=w0, axis= 2)
+
+    # map = layers.BatchNormalization()(map)
+    min = K.min(map)
+    map = map - min
+    sum = K.sum(map, axis=(1,2,3))
+    sum = K.expand_dims(K.expand_dims(K.expand_dims(sum)))
+    sum = K.repeat_elements(sum, 224, axis=1)
+    sum = K.repeat_elements(sum, 224, axis=2)
+    # sum = K.sum(map)
+    map = 224*map/sum # force the sum of attention to be a constant
     return map
     
 
@@ -133,7 +150,7 @@ if __name__ == "__main__":
     batch_size = 16
     target_size = (224, 224)
     COI = ['cat']
-    epochs = 30
+    epochs = 20
     r_blk = 1 # number of blocks to learn
     model_name = "vgg19"
     #number of layers at each block
