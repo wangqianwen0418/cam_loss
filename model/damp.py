@@ -1,3 +1,6 @@
+'''run the model trained by model.py, damp the results as npy in ../data/cache
+_author_=qianwen
+'''
 import keras
 from keras.models import load_model
 from keras.layers import Dense
