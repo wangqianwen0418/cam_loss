@@ -1,0 +1,12 @@
+graphviz==0.8
+Keras==2.0.5
+Markdown==2.6.8
+MarkupSafe==1.0
+mccabe==0.6.1
+numpy==1.13.0
+Pillow==5.1.0
+scikit-learn==0.19.1
+scipy==0.19.1
+six==1.10.0
+sklearn==0.0
+tensorflow==1.2.1
