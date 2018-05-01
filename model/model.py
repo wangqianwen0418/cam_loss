@@ -1,3 +1,4 @@
+_author_ = qianwen
 import keras
 from keras.engine.topology import Layer
 from keras.applications.resnet50 import ResNet50
@@ -21,6 +22,8 @@ from get_coco import COCOData
 
 import os
 import argparse
+
+# refine a model pretrained on imagenet, add an extract heatmap loss to tell the model the region it should look at
 
 class FC_layer(Layer):
     def __init__(self, units, 
@@ -142,30 +145,27 @@ if __name__ == "__main__":
     parser.add_argument("--bbox", type=lambda s: s.lower() in ['true', 't', 'yes', '1'], required=True)
     args = parser.parse_args()
 
-    exp = args.exp
-    bbox = args.bbox
-    per = args.per
-    year = args.year
+    exp = args.exp # name of the experiment
+    bbox = args.bbox # whether use the heatmap loss
+    per = args.per # use percentage of the training data
+    year = args.year # the year of the coco dataset, can be 2017 or 2014
 
     batch_size = 16
     target_size = (224, 224)
     COI = ['cat']
     epochs = 20
     r_blk = 1 # number of blocks to learn
-    model_name = "vgg19"
-    #number of layers at each block
+    model_name = "vgg19" # only support vgg19 and resnet50
+    
     if model_name == "vgg19":
-        blk_layers = [4,3,5,5,6]
-    else:
-        blk_layers =  [5, 12, 10, 10, 12, 10, 10, 10, 12,  10, 10, 10, 10, 10, 12, 10, 12]
-    num_classes = 1
-
-    if model_name == "vgg19":
+        blk_layers = [4,3,5,5,6] # number of layers at each block
         base_model = VGG19(weights="imagenet", input_shape=target_size + (3,), include_top=False,pooling="avg")
         last_conv = "block5_pool" # for vgg19 
-    else:
+    if model_name == "resnet50"::
+        blk_layers =  [5, 12, 10, 10, 12, 10, 10, 10, 12,  10, 10, 10, 10, 10, 12, 10, 12] # number of layers at each block
         base_model = ResNet50(weights="imagenet", input_shape=target_size + (3,), include_top=False,pooling="avg")
         last_conv = "activation_49" # for resnet50
+    num_classes = 1
     conv_features = base_model.get_layer(name=last_conv).output # get the output of last conv, shape (batch_size, 7, 7, 2048)
 
     x = base_model.output # the results after global avg, shape(batch_size, 2048)
