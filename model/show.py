@@ -1,3 +1,6 @@
+'''use the save npy files to generate images and t-sne positions
+author=qianwen
+'''
 from get_coco import COCOData
 import numpy as np
 import cv2
